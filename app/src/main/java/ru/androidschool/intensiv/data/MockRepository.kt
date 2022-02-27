@@ -15,4 +15,12 @@ object MockRepository {
 
         return moviesList
     }
+
+    fun getTvShows(): List<Movie> =
+        (0..10).map {
+            Movie(
+                title = "Super Show $it",
+                voteAverage = 10.0 - it
+            )
+        }
 }

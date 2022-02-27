@@ -44,7 +44,7 @@
         android:id="@+id/tv_shows_dest"
         android:name="ru.androidschool.intensiv.ui.tvshows.TvShowsFragment"
         android:label="@string/tv_show"
-        tools:layout="@layout/tv_shows_fragment">
+        tools:layout="@layout/fragment_tv_shows">
 
         <argument
             android:name="myarg"
