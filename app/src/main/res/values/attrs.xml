@@ -4,4 +4,17 @@
         <attr name="hint" format="string" />
         <attr name="cancel_visible" format="boolean" />
     </declare-styleable>
+
+    <declare-styleable name="CustomFiveStarsRating">
+        <attr name="numberOfStars" format="integer"/>
+        <attr name="startRating" format="float"/>
+        <attr name="starSize" format="dimension"/>
+        <attr name="spaceBetweenStars" format="dimension"/>
+        <attr name="emptyStarImage" format="reference"/>
+        <attr name="quarterFilledStarImage" format="reference"/>
+        <attr name="halfFilledStarImage" format="reference"/>
+        <attr name="threeQuarterFilledStarImage" format="reference"/>
+        <attr name="fullFilledStarImage" format="reference"/>
+    </declare-styleable>
+
 </resources>
