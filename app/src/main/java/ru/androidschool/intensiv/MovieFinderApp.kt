@@ -25,7 +25,7 @@ class MovieFinderApp : Application() {
             private set
 
         private val TAG = MainActivity::class.java.simpleName
-        private val API_KEY = BuildConfig.THE_MOVIE_DATABASE_API
+        private const val API_KEY = BuildConfig.THE_MOVIE_DATABASE_API
 
     }
 }
