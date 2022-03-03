@@ -1,4 +1,4 @@
-package ru.androidschool.intensiv.ui
+package ru.androidschool.intensiv.common
 
 import android.text.Editable
 import android.widget.EditText
