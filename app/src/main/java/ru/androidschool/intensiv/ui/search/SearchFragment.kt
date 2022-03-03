@@ -5,20 +5,32 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.navArgs
+import com.xwray.groupie.GroupAdapter
+import com.xwray.groupie.GroupieViewHolder
+import io.reactivex.disposables.CompositeDisposable
 import ru.androidschool.intensiv.R
 import ru.androidschool.intensiv.databinding.FeedHeaderBinding
 import ru.androidschool.intensiv.databinding.FragmentSearchBinding
-import ru.androidschool.intensiv.ui.feed.FeedFragment.Companion.KEY_SEARCH
+import ru.androidschool.intensiv.domain.entity.MovieEntity
 
 class SearchFragment : Fragment(R.layout.fragment_search) {
 
+    private val compositeDisposable = CompositeDisposable()
+
     private var _binding: FragmentSearchBinding? = null
     private var _searchBinding: FeedHeaderBinding? = null
+
+    private val adapter by lazy {
+        GroupAdapter<GroupieViewHolder>()
+    }
 
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = requireNotNull(_binding)
     private val searchBinding get() = requireNotNull(_searchBinding)
+
+    private val args: SearchFragmentArgs by navArgs()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -32,13 +44,23 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val searchTerm = requireArguments().getString(KEY_SEARCH)
-        searchBinding.searchToolbar.setText(searchTerm)
+        binding.moviesRecyclerView.adapter = adapter.apply { addAll(listOf()) }
+        searchBinding.searchToolbar.setText(args.initialString)
+        val initialList = args.movieList.movies
+        updateList(initialList)
+    }
+
+    private fun updateList(searchMovieList: List<MovieEntity>) {
+        val movieList = searchMovieList.map {
+            SearchMoviePreviewItem(it) {}
+        }
+        adapter.apply { addAll(movieList) }
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
         _searchBinding = null
+        compositeDisposable.clear()
     }
 }

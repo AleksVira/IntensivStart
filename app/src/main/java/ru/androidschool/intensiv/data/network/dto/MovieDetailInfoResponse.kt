@@ -12,7 +12,7 @@ data class MovieDetailInfoResponse(
     @SerialName("backdrop_path")
     val backdropPath: String?,
     @SerialName("belongs_to_collection")
-    val belongsToCollection: String? = null,
+    val belongsToCollection: BelongsToCollection?,
     val budget: Int?,
     val genres: List<Genre>?,
     val homepage: String?,
