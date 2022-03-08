@@ -1,5 +1,6 @@
 package ru.androidschool.intensiv.data.network.api
 
+import android.os.Build
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
@@ -21,8 +22,12 @@ object MovieApiClient {
 
     private val httpClient = OkHttpClient.Builder()
         .addInterceptor(MovieApiHeaderInterceptor())
-        .addInterceptor(HttpLoggingInterceptor().apply{
-            this.level = HttpLoggingInterceptor.Level.BODY
+        .addInterceptor(HttpLoggingInterceptor().apply {
+            if (BuildConfig.DEBUG) {
+                this.level = HttpLoggingInterceptor.Level.BODY
+            } else {
+                this.level = HttpLoggingInterceptor.Level.NONE
+            }
         })
         .build()
 

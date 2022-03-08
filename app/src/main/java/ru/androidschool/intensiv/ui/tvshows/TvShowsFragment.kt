@@ -11,9 +11,11 @@ import kotlinx.serialization.ExperimentalSerializationApi
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import ru.androidschool.intensiv.BuildConfig
 import ru.androidschool.intensiv.R
 import ru.androidschool.intensiv.data.network.api.MovieApiClient
-import ru.androidschool.intensiv.data.network.dto.TvShowListResponse
+import ru.androidschool.intensiv.data.network.dto.MoviesListResponse
+import ru.androidschool.intensiv.data.network.dto.TvShowDto
 import ru.androidschool.intensiv.databinding.FragmentTvShowsBinding
 import ru.androidschool.intensiv.domain.entity.TvShowEntity
 import timber.log.Timber
@@ -46,22 +48,22 @@ class TvShowsFragment : Fragment(R.layout.fragment_tv_shows) {
     @ExperimentalSerializationApi
     private fun fetchTvShowsList(language: String) {
         val getTvShows = MovieApiClient.apiClient.getTvShowsResponse(language)
-        getTvShows.enqueue(object : Callback<TvShowListResponse?> {
-            override fun onFailure(call: Call<TvShowListResponse?>, t: Throwable) {
+        getTvShows.enqueue(object : Callback<MoviesListResponse<TvShowDto>> {
+            override fun onFailure(call: Call<MoviesListResponse<TvShowDto>>, t: Throwable) {
                 TODO("Not yet implemented")
             }
 
             override fun onResponse(
-                call: Call<TvShowListResponse?>,
-                response: Response<TvShowListResponse?>
+                call: Call<MoviesListResponse<TvShowDto>>,
+                response: Response<MoviesListResponse<TvShowDto>>
             ) {
                 val tvShowsDtoList = response.body()?.results ?: listOf()
                 val tvShowsEntityList = tvShowsDtoList.map { tvShowDto ->
                     TvShowEntity(
                         tvShowId = tvShowDto.id ?: 0,
-                        title = tvShowDto.name ?: "",
+                        title = tvShowDto.name.orEmpty(),
                         voteAverage = tvShowDto.voteAverage ?: 0.0,
-                        posterUrl = "https://image.tmdb.org/t/p/w500${tvShowDto.backdropPath}"
+                        posterUrl = "${BuildConfig.TMDB_RESOURCE_URL}w500${tvShowDto.backdropPath}"
                     )
                 }
 

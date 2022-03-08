@@ -12,12 +12,14 @@ import kotlinx.serialization.ExperimentalSerializationApi
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import ru.androidschool.intensiv.BuildConfig
 import ru.androidschool.intensiv.R
 import ru.androidschool.intensiv.common.afterTextChanged
 import ru.androidschool.intensiv.domain.entity.MovieEntity
 import ru.androidschool.intensiv.databinding.FeedFragmentBinding
 import ru.androidschool.intensiv.databinding.FeedHeaderBinding
 import ru.androidschool.intensiv.data.network.api.MovieApiClient
+import ru.androidschool.intensiv.data.network.dto.MovieDto
 import ru.androidschool.intensiv.data.network.dto.MoviesListResponse
 import timber.log.Timber
 
@@ -87,25 +89,25 @@ class FeedFragment : Fragment(R.layout.feed_fragment) {
 
     @ExperimentalSerializationApi
     private fun loadAndShowMoviesList(
-        getMoviesListMovies: Call<MoviesListResponse>,
+        getMoviesListMovies: Call<MoviesListResponse<MovieDto>>,
         @StringRes title: Int
     ) {
-        getMoviesListMovies.enqueue(object : Callback<MoviesListResponse?> {
-            override fun onFailure(call: Call<MoviesListResponse?>, t: Throwable) {
+        getMoviesListMovies.enqueue(object : Callback<MoviesListResponse<MovieDto>> {
+            override fun onFailure(call: Call<MoviesListResponse<MovieDto>>, t: Throwable) {
                 TODO("Not yet implemented")
             }
 
             override fun onResponse(
-                call: Call<MoviesListResponse?>,
-                response: Response<MoviesListResponse?>
+                call: Call<MoviesListResponse<MovieDto>>,
+                response: Response<MoviesListResponse<MovieDto>>
             ) {
                 val moviesDtoList = response.body()?.results ?: listOf()
                 val moviesEntityList = moviesDtoList.map { movieDto ->
                     MovieEntity(
                         movieId = movieDto.id ?: 0,
-                        title = movieDto.title ?: "",
+                        title = movieDto.title.orEmpty(),
                         voteAverage = movieDto.voteAverage ?: 0.0,
-                        posterUrl = "https://image.tmdb.org/t/p/w500${movieDto.posterPath}"
+                        posterUrl = "${BuildConfig.TMDB_RESOURCE_URL}w500${movieDto.posterPath}"
                     )
                 }
 
