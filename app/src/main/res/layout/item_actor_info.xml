@@ -11,9 +11,9 @@
         android:id="@+id/actor_image"
         android:layout_width="@dimen/actor_info_width"
         android:layout_height="@dimen/actor_info_width"
-        android:scaleType="centerCrop"
-        android:paddingVertical="@dimen/material_margin_super_small"
         android:paddingHorizontal="@dimen/material_margin_super_small"
+        android:paddingVertical="@dimen/material_margin_super_small"
+        android:scaleType="centerCrop"
         app:shapeAppearanceOverlay="@style/image_circle"
         tools:src="@tools:sample/avatars" />
 
@@ -22,8 +22,9 @@
         android:layout_width="@dimen/actor_info_width"
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
-        tools:text="John \nDoe"
+        android:paddingHorizontal="@dimen/material_margin_super_small"
         android:textColor="@color/textColorGrey"
-        android:textSize="12sp" />
+        android:textSize="12sp"
+        tools:text="John \nDoe" />
 
 </LinearLayout>

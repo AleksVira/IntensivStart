@@ -24,7 +24,7 @@
             tools:src="@tools:sample/backgrounds/scenic" />
 
         <ImageView
-            android:id="@+id/arrow_back_iv"
+            android:id="@+id/arrow_back_image"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/material_margin_small"
@@ -147,13 +147,20 @@
             app:layout_constraintTop_toTopOf="@id/studio_label"
             tools:text="Warner Bros" />
 
+        <androidx.constraintlayout.widget.Barrier
+            android:id="@+id/studio_barrier"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:barrierDirection="bottom"
+            app:constraint_referenced_ids="studio_label, studio_name_text" />
+
         <TextView
             android:id="@+id/genre_label"
             style="@style/details_labels"
             android:layout_marginTop="@dimen/material_margin_small"
             android:text="@string/genre_label"
             app:layout_constraintStart_toStartOf="@id/studio_label"
-            app:layout_constraintTop_toBottomOf="@id/studio_label" />
+            app:layout_constraintTop_toBottomOf="@id/studio_barrier" />
 
         <TextView
             android:id="@+id/genre_text"
@@ -162,6 +169,13 @@
             app:layout_constraintStart_toEndOf="@id/detail_barrier"
             app:layout_constraintTop_toTopOf="@id/genre_label"
             tools:text="Action, Adventure, Fantasy" />
+
+        <androidx.constraintlayout.widget.Barrier
+            android:id="@+id/genre_barrier"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:barrierDirection="bottom"
+            app:constraint_referenced_ids="genre_label, genre_text" />
 
         <TextView
             android:id="@+id/year_label"
@@ -172,7 +186,7 @@
             android:paddingBottom="@dimen/material_margin_small"
             android:text="@string/year_label"
             app:layout_constraintStart_toStartOf="@id/genre_label"
-            app:layout_constraintTop_toBottomOf="@id/genre_label" />
+            app:layout_constraintTop_toBottomOf="@id/genre_barrier" />
 
         <TextView
             android:id="@+id/year_text"

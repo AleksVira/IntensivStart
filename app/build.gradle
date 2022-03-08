@@ -1,6 +1,9 @@
-apply plugin: 'com.android.application'
-apply plugin: 'kotlin-android'
-apply plugin: "androidx.navigation.safeargs.kotlin"
+plugins {
+    id 'com.android.application'
+    id 'kotlin-android'
+    id 'org.jetbrains.kotlin.plugin.serialization' version '1.6.10'
+    id 'androidx.navigation.safeargs.kotlin'
+}
 
 apply from: "../ktlint.gradle"
 
@@ -19,8 +22,16 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
         buildConfigField 'String', 'THE_MOVIE_DATABASE_API', keystoreProperties['THE_MOVIE_DATABASE_API']
+        buildConfigField "String", "BASE_URL", "\"https://api.themoviedb.org/3/\""
+        buildConfigField "String", "TMDB_RESOURCE_URL", "\"https://image.tmdb.org/t/p/\""
     }
     buildTypes {
+        debug {
+            buildConfigField "String", "BASE_URL", "\"https://api.themoviedb.org/3/\""
+        }
+        staging {
+            buildConfigField "String", "BASE_URL", "\"https://api.themoviedb.org/3/\""
+        }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
@@ -43,7 +54,7 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-//    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlinVersion"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlinVersion"
     implementation "androidx.appcompat:appcompat:$supportLibVersion"
     implementation "androidx.constraintlayout:constraintlayout:$constraintLayoutVersion"
     implementation "com.google.android.material:material:$materialVersion"
@@ -61,18 +72,27 @@ dependencies {
     androidTestImplementation "androidx.test.espresso:espresso-core:$espressoVersion"
 
     // Navigation
-    implementation "androidx.navigation:navigation-fragment-ktx:$rootProject.navigationVersion"
-    implementation "androidx.navigation:navigation-ui-ktx:$rootProject.navigationVersion"
+    implementation "androidx.navigation:navigation-fragment-ktx:$navigationVersion"
+    implementation "androidx.navigation:navigation-ui-ktx:$navigationVersion"
 
     // Picasso
-    implementation "com.squareup.picasso:picasso:$rootProject.picassoVersion"
-    implementation "jp.wasabeef:picasso-transformations:$rootProject.picassoTransformation"
+    implementation "com.squareup.picasso:picasso:$picassoVersion"
+    implementation "jp.wasabeef:picasso-transformations:$picassoTransformation"
 
-    implementation "androidx.recyclerview:recyclerview:$rootProject.recyclerViewVersion"
+    implementation "androidx.recyclerview:recyclerview:$recyclerViewVersion"
 
     // Groupie
-    implementation "com.github.lisawray.groupie:groupie:$rootProject.groupieVersion"
-    implementation "com.github.lisawray.groupie:groupie-viewbinding:$rootProject.groupieVersion"
+    implementation "com.github.lisawray.groupie:groupie:$groupieVersion"
+    implementation "com.github.lisawray.groupie:groupie-viewbinding:$groupieVersion"
 
-    implementation "com.jakewharton.timber:timber:$rootProject.timberVersion"
+    // Timber
+    implementation "com.jakewharton.timber:timber:$timberVersion"
+
+    implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinxSerializationJsonVersion"
+
+    // Retrofit
+    implementation "com.squareup.okhttp3:okhttp:$okhttp3Version"
+    implementation "com.squareup.okhttp3:logging-interceptor:$okhttp3Version"
+    implementation "com.squareup.retrofit2:retrofit:$retrofit2Version"
+    implementation 'com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter:0.8.0'
 }

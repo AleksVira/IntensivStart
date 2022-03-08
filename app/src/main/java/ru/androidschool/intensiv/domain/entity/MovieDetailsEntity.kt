@@ -1,4 +1,4 @@
-package ru.androidschool.intensiv.data
+package ru.androidschool.intensiv.domain.entity
 
 data class MovieDetailsEntity(
     val movieImageUrl: String,
@@ -7,7 +7,6 @@ data class MovieDetailsEntity(
     val watchLink: String,
     val movieRating: Float,
     val movieDescription: String,
-    val actorList: List<ActorInfoEntity>,
     val studioName: String,
     val genre: String,
     val year: String,

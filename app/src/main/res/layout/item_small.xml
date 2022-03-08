@@ -8,4 +8,4 @@
     android:layout_margin="@dimen/material_margin_small"
     tools:src="@drawable/ic_avatar"
     android:scaleType="centerCrop"
-    app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.CornerSize10Percent" />
+    app:shapeAppearanceOverlay="@style/CornerSize10Percent" />

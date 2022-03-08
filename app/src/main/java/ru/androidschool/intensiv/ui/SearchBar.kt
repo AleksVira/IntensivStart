@@ -7,6 +7,7 @@ import android.view.View
 import android.widget.FrameLayout
 import androidx.core.view.isVisible
 import ru.androidschool.intensiv.R
+import ru.androidschool.intensiv.common.afterTextChanged
 import ru.androidschool.intensiv.databinding.SearchToolbarBinding
 
 class SearchBar @JvmOverloads constructor(

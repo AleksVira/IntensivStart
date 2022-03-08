@@ -4,12 +4,12 @@ import android.view.View
 import com.xwray.groupie.viewbinding.BindableItem
 import ru.androidschool.intensiv.R
 import ru.androidschool.intensiv.common.loadImage
-import ru.androidschool.intensiv.data.Movie
+import ru.androidschool.intensiv.domain.entity.MovieEntity
 import ru.androidschool.intensiv.databinding.ItemSmallBinding
 
 class MoviePreviewItem(
-    private val content: Movie,
-    private val onClick: (movie: Movie) -> Unit
+    private val content: MovieEntity,
+    private val onClick: (movieEntity: MovieEntity) -> Unit
 ) : BindableItem<ItemSmallBinding>() {
 
     override fun getLayout() = R.layout.item_small

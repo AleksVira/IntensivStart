@@ -6,7 +6,7 @@ import com.squareup.picasso.Picasso
 import com.xwray.groupie.viewbinding.BindableItem
 import com.xwray.groupie.viewbinding.GroupieViewHolder
 import ru.androidschool.intensiv.R
-import ru.androidschool.intensiv.data.ActorInfoEntity
+import ru.androidschool.intensiv.domain.entity.ActorInfoEntity
 import ru.androidschool.intensiv.databinding.ItemActorInfoBinding
 
 class ActorInfoItem(

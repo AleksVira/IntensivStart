@@ -17,8 +17,8 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
 
     // This property is only valid between onCreateView and
     // onDestroyView.
-    private val binding get() = _binding!!
-    private val searchBinding get() = _searchBinding!!
+    private val binding get() = requireNotNull(_binding)
+    private val searchBinding get() = requireNotNull(_searchBinding)
 
     override fun onCreateView(
         inflater: LayoutInflater,

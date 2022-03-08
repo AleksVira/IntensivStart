@@ -8,18 +8,26 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.navArgs
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.GroupieViewHolder
+import kotlinx.serialization.ExperimentalSerializationApi
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import ru.androidschool.intensiv.BuildConfig
 import ru.androidschool.intensiv.R
 import ru.androidschool.intensiv.common.loadImage
-import ru.androidschool.intensiv.data.ActorInfoEntity
-import ru.androidschool.intensiv.data.MockRepository
-import ru.androidschool.intensiv.data.MovieDetailsEntity
+import ru.androidschool.intensiv.data.network.api.MovieApiClient
+import ru.androidschool.intensiv.data.network.dto.MovieCreditsResponse
+import ru.androidschool.intensiv.data.network.dto.MovieDetailInfoResponse
 import ru.androidschool.intensiv.databinding.FragmentMovieDetailsBinding
+import ru.androidschool.intensiv.domain.entity.ActorInfoEntity
+import ru.androidschool.intensiv.domain.entity.MovieDetailsEntity
 import timber.log.Timber
 
+@ExperimentalSerializationApi
 class MovieDetailsFragment : Fragment(R.layout.fragment_movie_details) {
 
     private var _binding: FragmentMovieDetailsBinding? = null
-    private val binding get() = _binding!!
+    private val binding get() = requireNotNull(_binding)
 
     private val detailsAdapter by lazy {
         GroupAdapter<GroupieViewHolder>()
@@ -38,9 +46,12 @@ class MovieDetailsFragment : Fragment(R.layout.fragment_movie_details) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding.arrowBackImage.setOnClickListener { onBackPressed() }
         val movieId = args.movieId
-        val movieDetails = MockRepository.getMovieDetails(movieId)
-        bindDetails(movieDetails)
+        val movieNetworkDetails = MovieApiClient.apiClient.getMovieInfoById(movieId, "ru")
+        fetchDetailMovieInfo(movieNetworkDetails)
+        val movieCastList = MovieApiClient.apiClient.getMoviePersonsById(movieId, "ru")
+        fetchCredits(movieCastList)
     }
 
     private fun bindDetails(movieDetails: MovieDetailsEntity) {
@@ -52,19 +63,74 @@ class MovieDetailsFragment : Fragment(R.layout.fragment_movie_details) {
             studioNameText.text = movieDetails.studioName
             genreText.text = movieDetails.genre
             yearText.text = movieDetails.year
-
-            val actorsListItems: List<ActorInfoItem> = movieDetails.actorList.map {
-                ActorInfoItem(
-                    content = ActorInfoEntity(imageUrl = it.imageUrl, fullName = it.fullName),
-                    onClick = { name ->
-                        Timber.d("MyTAG_MovieDetailsFragment_bindDetails(): $name")
-                    }
-                )
-            }
-            detailActorsList.adapter = detailsAdapter.apply {
-                addAll(actorsListItems)
-            }
         }
+    }
+
+    private fun fetchDetailMovieInfo(movieNetworkDetails: Call<MovieDetailInfoResponse>) {
+        movieNetworkDetails.enqueue(object : Callback<MovieDetailInfoResponse?> {
+            override fun onFailure(call: Call<MovieDetailInfoResponse?>, t: Throwable) {
+                Timber.d("MyTAG_MovieDetailsFragment_onFailure(): ")
+            }
+
+            override fun onResponse(
+                call: Call<MovieDetailInfoResponse?>,
+                response: Response<MovieDetailInfoResponse?>
+            ) {
+                response.body()?.let { it ->
+                    MovieDetailsEntity(
+                        movieImageUrl = "${BuildConfig.TMDB_RESOURCE_URL}w500${it.backdropPath}",
+                        movieName = it.title.orEmpty(),
+                        isLiked = false,
+                        watchLink = "",
+                        movieRating = it.voteAverage?.toFloat() ?: 0F,
+                        movieDescription = it.overview.orEmpty(),
+                        studioName = it.productionCompanies?.map { company ->
+                            company.name
+                        }?.joinToString().orEmpty(),
+                        genre = it.genres?.map { genre ->
+                            genre.name
+                        }?.joinToString()?.replaceFirstChar(Char::titlecase).orEmpty(),
+                        year = it.releaseDate.orEmpty()
+                    )
+                }?.also {
+                    bindDetails(it)
+                }
+            }
+        })
+    }
+
+    private fun fetchCredits(movieCastList: Call<MovieCreditsResponse>) {
+        movieCastList.enqueue(object : Callback<MovieCreditsResponse?> {
+            override fun onFailure(call: Call<MovieCreditsResponse?>, t: Throwable) {
+                TODO("Not yet implemented")
+            }
+
+            override fun onResponse(
+                call: Call<MovieCreditsResponse?>,
+                response: Response<MovieCreditsResponse?>
+            ) {
+                Timber.d("MyTAG_MovieDetailsFragment_onResponse(): ${response.body()}")
+                val newActorsListItems = response.body()?.cast?.map { cast ->
+                    Timber.d("MyTAG_MovieDetailsFragment_onResponse(): $cast")
+                    ActorInfoItem(
+                        content = ActorInfoEntity(
+                            imageUrl = "${BuildConfig.TMDB_RESOURCE_URL}w500${cast.profilePath}",
+                            fullName = cast.originalName.orEmpty()
+                        ),
+                        onClick = { name ->
+                            Timber.d("MyTAG_MovieDetailsFragment_bindDetails(): $name")
+                        }
+                    )
+                } ?: listOf()
+                binding.detailActorsList.adapter = detailsAdapter.apply {
+                    addAll(newActorsListItems)
+                }
+            }
+        })
+    }
+
+    private fun onBackPressed() {
+        requireActivity().onBackPressed()
     }
 
     override fun onDestroyView() {
