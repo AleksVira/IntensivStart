@@ -8,15 +8,12 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.navArgs
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.GroupieViewHolder
-import io.reactivex.disposables.CompositeDisposable
 import ru.androidschool.intensiv.R
 import ru.androidschool.intensiv.databinding.FeedHeaderBinding
 import ru.androidschool.intensiv.databinding.FragmentSearchBinding
 import ru.androidschool.intensiv.domain.entity.MovieEntity
 
 class SearchFragment : Fragment(R.layout.fragment_search) {
-
-    private val compositeDisposable = CompositeDisposable()
 
     private var _binding: FragmentSearchBinding? = null
     private var _searchBinding: FeedHeaderBinding? = null
@@ -61,6 +58,5 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
         super.onDestroyView()
         _binding = null
         _searchBinding = null
-        compositeDisposable.clear()
     }
 }

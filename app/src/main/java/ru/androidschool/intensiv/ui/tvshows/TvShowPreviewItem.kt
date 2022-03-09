@@ -22,7 +22,6 @@ class TvShowPreviewItem(
             onClick.invoke(content)
         }
         view.tvShowImage
-//            .loadImage("https://m.media-amazon.com/images/M/MV5BYTk3MDljOWQtNGI2My00OTEzLTlhYjQtOTQ4ODM2MzUwY2IwXkEyXkFqcGdeQXVyNTIzOTk5ODM@._V1_.jpg")
             .loadImage(content.horizontalPosterUrl)
     }
 

@@ -15,6 +15,7 @@ import kotlinx.serialization.ExperimentalSerializationApi
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import ru.androidschool.intensiv.BuildConfig
 import ru.androidschool.intensiv.R
 import ru.androidschool.intensiv.common.loadImage
 import ru.androidschool.intensiv.common.prepare
@@ -78,19 +79,19 @@ class MovieDetailsFragment : Fragment(R.layout.fragment_movie_details) {
             .subscribe { response ->
                 response.apply {
                     MovieDetailsEntity(
-                        movieImageUrl = "https://image.tmdb.org/t/p/w500${response.backdropPath}",
-                        movieName = title ?: "",
+                        movieImageUrl = "${BuildConfig.TMDB_RESOURCE_URL}w500${response.backdropPath}",
+                        movieName = title.orEmpty(),
                         isLiked = false,
                         watchLink = "",
                         movieRating = voteAverage?.toFloat() ?: 0F,
-                        movieDescription = overview ?: "",
+                        movieDescription = overview.orEmpty(),
                         studioName = productionCompanies?.map { company ->
                             company.name
-                        }?.joinToString() ?: "",
+                        }?.joinToString().orEmpty(),
                         genre = genres?.map { genre ->
                             genre.name
-                        }?.joinToString()?.replaceFirstChar(Char::titlecase) ?: "",
-                        year = releaseDate ?: ""
+                        }?.joinToString()?.replaceFirstChar(Char::titlecase).orEmpty(),
+                        year = releaseDate.orEmpty()
                     ).also { movieDetail ->
                         bindDetails(movieDetail)
                     }
@@ -108,8 +109,8 @@ class MovieDetailsFragment : Fragment(R.layout.fragment_movie_details) {
                 val newActorsListItems = response.cast?.map { cast ->
                     ActorInfoItem(
                         content = ActorInfoEntity(
-                            imageUrl = "https://image.tmdb.org/t/p/w500${cast.profilePath}",
-                            fullName = cast.originalName ?: ""
+                            imageUrl = "${BuildConfig.TMDB_RESOURCE_URL}w500${cast.profilePath}",
+                            fullName = cast.originalName.orEmpty()
                         ),
                         onClick = { name ->
                             Timber.d("MyTAG_MovieDetailsFragment_bindDetails(): $name")

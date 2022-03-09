@@ -13,9 +13,11 @@ import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.serialization.ExperimentalSerializationApi
+import ru.androidschool.intensiv.BuildConfig
 import ru.androidschool.intensiv.R
 import ru.androidschool.intensiv.common.prepare
 import ru.androidschool.intensiv.data.network.api.MovieApiClient
+import ru.androidschool.intensiv.data.network.dto.MovieDto
 import ru.androidschool.intensiv.data.network.dto.MoviesListResponse
 import ru.androidschool.intensiv.databinding.FeedFragmentBinding
 import ru.androidschool.intensiv.databinding.FeedHeaderBinding
@@ -95,7 +97,7 @@ class FeedFragment : Fragment(R.layout.feed_fragment) {
 
     @ExperimentalSerializationApi
     private fun loadAndShowMoviesList(
-        getMoviesListMovies: Single<MoviesListResponse>,
+        getMoviesListMovies: Single<MoviesListResponse<MovieDto>>,
         @StringRes title: Int
     ) {
         getMoviesListMovies
@@ -105,10 +107,10 @@ class FeedFragment : Fragment(R.layout.feed_fragment) {
                 val moviesEntityList = moviesDtoList.map { movieDto ->
                     MovieEntity(
                         movieId = movieDto.id ?: 0,
-                        title = movieDto.title ?: "",
+                        title = movieDto.title.orEmpty(),
                         voteAverage = movieDto.voteAverage ?: 0.0,
-                        posterUrl = "https://image.tmdb.org/t/p/w500${movieDto.posterPath}",
-                        horizontalPosterUrl = "https://image.tmdb.org/t/p/w500${movieDto.backdropPath}"
+                        posterUrl = "${BuildConfig.TMDB_RESOURCE_URL}w500${movieDto.posterPath}",
+                        horizontalPosterUrl = "${BuildConfig.TMDB_RESOURCE_URL}w500${movieDto.backdropPath}"
                     )
                 }
                 val recommendedMoviesList = listOf(
@@ -144,10 +146,10 @@ class FeedFragment : Fragment(R.layout.feed_fragment) {
                     val moviesEntityList = moviesDtoList.map { movieDto ->
                         MovieEntity(
                             movieId = movieDto.id ?: 0,
-                            title = movieDto.title ?: "",
+                            title = movieDto.title.orEmpty(),
                             voteAverage = movieDto.voteAverage ?: 0.0,
-                            posterUrl = "https://image.tmdb.org/t/p/w500${movieDto.posterPath}",
-                            horizontalPosterUrl = "https://image.tmdb.org/t/p/w500${movieDto.backdropPath}"
+                            posterUrl = "${BuildConfig.TMDB_RESOURCE_URL}w500${movieDto.posterPath}",
+                            horizontalPosterUrl = "${BuildConfig.TMDB_RESOURCE_URL}w500${movieDto.backdropPath}"
                         )
                     }
                     showSearchResult(MovieListToShow(moviesEntityList), initialString)

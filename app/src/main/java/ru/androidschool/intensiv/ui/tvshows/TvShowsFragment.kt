@@ -11,6 +11,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.serialization.ExperimentalSerializationApi
+import ru.androidschool.intensiv.BuildConfig
 import ru.androidschool.intensiv.R
 import ru.androidschool.intensiv.common.prepare
 import ru.androidschool.intensiv.data.network.api.MovieApiClient
@@ -54,9 +55,9 @@ class TvShowsFragment : Fragment(R.layout.fragment_tv_shows) {
                 val tvShowsEntityList = tvShowsDtoList.map { tvShowDto ->
                     TvShowEntity(
                         tvShowId = tvShowDto.id ?: 0,
-                        title = tvShowDto.name ?: "",
+                        title = tvShowDto.name.orEmpty(),
                         voteAverage = tvShowDto.voteAverage ?: 0.0,
-                        horizontalPosterUrl = "https://image.tmdb.org/t/p/w500${tvShowDto.backdropPath}"
+                        horizontalPosterUrl = "${BuildConfig.TMDB_RESOURCE_URL}w500${tvShowDto.backdropPath}"
                     )
                 }
                 val tvShowsList = tvShowsEntityList.map {

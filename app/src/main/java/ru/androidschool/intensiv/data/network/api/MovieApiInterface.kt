@@ -7,30 +7,27 @@ import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
-import ru.androidschool.intensiv.data.network.dto.MovieCreditsResponse
-import ru.androidschool.intensiv.data.network.dto.MovieDetailInfoResponse
-import ru.androidschool.intensiv.data.network.dto.MoviesListResponse
-import ru.androidschool.intensiv.data.network.dto.TvShowListResponse
+import ru.androidschool.intensiv.data.network.dto.*
 
 interface MovieApiInterface {
 
     @GET("movie/now_playing")
-    fun getNowPlayingMoviesResponse(@Query("language") language: String = "ru"): Single<MoviesListResponse>
+    fun getNowPlayingMoviesResponse(@Query("language") language: String = "ru"): Single<MoviesListResponse<MovieDto>>
 
     @GET("movie/upcoming")
-    fun getUpcomingMoviesResponse(@Query("language") language: String = "ru"): Single<MoviesListResponse>
+    fun getUpcomingMoviesResponse(@Query("language") language: String = "ru"): Single<MoviesListResponse<MovieDto>>
 
     @GET("movie/popular")
-    fun getPopularMoviesResponse(@Query("language") language: String = "ru"): Single<MoviesListResponse>
+    fun getPopularMoviesResponse(@Query("language") language: String = "ru"): Single<MoviesListResponse<MovieDto>>
 
     @GET("tv/popular")
-    fun getTvShowsResponse(@Query("language") language: String = "ru"): Single<TvShowListResponse>
+    fun getTvShowsResponse(@Query("language") language: String = "ru"): Single<MoviesListResponse<TvShowDto>>
 
     @GET("search/movie")
     fun searchMovieByTitle(
         @Query("query") query: String,
         @Query("language") language: String = "ru"
-    ): Observable<MoviesListResponse>
+    ): Observable<MoviesListResponse<MovieDto>>
 
     @GET("movie/{movie_id}")
     fun getMovieInfoById(
@@ -43,5 +40,4 @@ interface MovieApiInterface {
         @Path("movie_id") movieId: Int,
         @Query("language") language: String = "ru"
     ): Single<MovieCreditsResponse>
-
 }

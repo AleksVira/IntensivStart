@@ -9,10 +9,10 @@ import ru.androidschool.intensiv.data.network.dto.MovieDto
 
 @Keep
 @Serializable
-data class MoviesListResponse(
+data class MoviesListResponse<T>(
     val dates: Dates? = null,
     val page: Int?,
-    val results: List<MovieDto>?,
+    val results: List<T>?,
     @SerialName("total_pages")
     val totalPages: Int?,
     @SerialName("total_results")
