@@ -3,6 +3,7 @@ plugins {
     id 'kotlin-android'
     id 'org.jetbrains.kotlin.plugin.serialization' version '1.6.10'
     id 'androidx.navigation.safeargs.kotlin'
+    id 'kotlin-parcelize'
 }
 
 apply from: "../ktlint.gradle"
@@ -22,17 +23,19 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
         buildConfigField 'String', 'THE_MOVIE_DATABASE_API', keystoreProperties['THE_MOVIE_DATABASE_API']
-        buildConfigField "String", "BASE_URL", "\"https://api.themoviedb.org/3/\""
-        buildConfigField "String", "TMDB_RESOURCE_URL", "\"https://image.tmdb.org/t/p/\""
     }
     buildTypes {
         debug {
             buildConfigField "String", "BASE_URL", "\"https://api.themoviedb.org/3/\""
+            buildConfigField "String", "TMDB_RESOURCE_URL", "\"https://image.tmdb.org/t/p/\""
         }
         staging {
             buildConfigField "String", "BASE_URL", "\"https://api.themoviedb.org/3/\""
+            buildConfigField "String", "TMDB_RESOURCE_URL", "\"https://image.tmdb.org/t/p/\""
         }
         release {
+            buildConfigField "String", "BASE_URL", "\"https://api.themoviedb.org/3/\""
+            buildConfigField "String", "TMDB_RESOURCE_URL", "\"https://image.tmdb.org/t/p/\""
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
@@ -94,5 +97,10 @@ dependencies {
     implementation "com.squareup.okhttp3:okhttp:$okhttp3Version"
     implementation "com.squareup.okhttp3:logging-interceptor:$okhttp3Version"
     implementation "com.squareup.retrofit2:retrofit:$retrofit2Version"
-    implementation 'com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter:0.8.0'
+    implementation "com.jakewharton.retrofit:retrofit2-rxjava2-adapter:$retrofit2Rxjava2AdapterVersion"
+    implementation "com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter:$retrofit2KotlinxSerializationConverterVersion"
+
+    //RxJava
+    implementation "io.reactivex.rxjava2:rxandroid:$rxAndroidVersion"
+    implementation "io.reactivex.rxjava2:rxjava:$rxJava2Version"
 }

@@ -1,6 +1,6 @@
 package ru.androidschool.intensiv.data.network.api
 
-import android.os.Build
+import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
@@ -36,7 +36,7 @@ object MovieApiClient {
         val retrofit: Retrofit = Retrofit.Builder()
             .baseUrl(BuildConfig.BASE_URL)
             .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
-            .client(httpClient)
+            .addCallAdapterFactory(RxJava2CallAdapterFactory.create()).client(httpClient)
             .build()
 
         return@lazy retrofit.create(MovieApiInterface::class.java)

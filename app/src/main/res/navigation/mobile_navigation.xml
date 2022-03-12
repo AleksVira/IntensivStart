@@ -11,38 +11,10 @@
         <action
             android:id="@+id/action_home_dest_to_movie_details_fragment"
             app:destination="@id/movie_details_fragment" />
-    </fragment>
-
-<!--
-    <fragment
-        android:id="@+id/flow_step_one_dest"
-        android:name="ru.androidschool.intensiv.ui.movie_details.MovieDetailsFragment"
-        tools:layout="@layout/fragment_movie_details">
-        <argument
-            android:name="flowStepNumber"
-            android:defaultValue="1"
-            app:argType="integer" />
-
         <action
-            android:id="@+id/next_action"
-            app:destination="@+id/flow_step_two_dest" />
+            android:id="@+id/action_home_dest_to_search_dest"
+            app:destination="@id/search_dest" />
     </fragment>
-
-    <fragment
-        android:id="@+id/flow_step_two_dest"
-        android:name="ru.androidschool.intensiv.ui.movie_details.MovieDetailsFragment"
-        tools:layout="@layout/fragment_movie_details">
-
-        <argument
-            android:name="flowStepNumber"
-            android:defaultValue="2"
-            app:argType="integer" />
-
-        <action
-            android:id="@+id/next_action"
-            app:popUpTo="@id/home_dest" />
-    </fragment>
--->
 
     <fragment
         android:id="@+id/tv_shows_dest"
@@ -54,6 +26,7 @@
             android:name="myarg"
             android:defaultValue="Android!" />
     </fragment>
+
     <fragment
         android:id="@+id/movie_details_fragment"
         android:name="ru.androidschool.intensiv.ui.movie_details.MovieDetailsFragment"
@@ -63,14 +36,24 @@
             android:name="movieId"
             app:argType="integer" />
     </fragment>
+
     <fragment
         android:id="@+id/profile_fragment"
         android:name="ru.androidschool.intensiv.ui.profile.ProfileFragment"
         android:label="fragment_profile"
         tools:layout="@layout/fragment_profile" />
+
     <fragment
         android:id="@+id/search_dest"
         android:name="ru.androidschool.intensiv.ui.search.SearchFragment"
         android:label="fragment_search"
-        tools:layout="@layout/fragment_search" />
+        tools:layout="@layout/fragment_search" >
+        <argument
+            android:name="movieList"
+            app:argType="ru.androidschool.intensiv.domain.entity.MovieListToShow" />
+        <argument
+            android:name="initialString"
+            app:argType="string"
+            android:defaultValue='""' />
+    </fragment>
 </navigation>

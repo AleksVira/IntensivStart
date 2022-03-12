@@ -7,21 +7,22 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.GroupieViewHolder
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.schedulers.Schedulers
 import kotlinx.serialization.ExperimentalSerializationApi
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 import ru.androidschool.intensiv.BuildConfig
 import ru.androidschool.intensiv.R
+import ru.androidschool.intensiv.common.prepare
 import ru.androidschool.intensiv.data.network.api.MovieApiClient
-import ru.androidschool.intensiv.data.network.dto.MoviesListResponse
-import ru.androidschool.intensiv.data.network.dto.TvShowDto
 import ru.androidschool.intensiv.databinding.FragmentTvShowsBinding
 import ru.androidschool.intensiv.domain.entity.TvShowEntity
 import timber.log.Timber
 
 @ExperimentalSerializationApi
 class TvShowsFragment : Fragment(R.layout.fragment_tv_shows) {
+
+    private val compositeDisposable = CompositeDisposable()
 
     private var _binding: FragmentTvShowsBinding? = null
     private val binding get() = requireNotNull(_binding)
@@ -42,43 +43,36 @@ class TvShowsFragment : Fragment(R.layout.fragment_tv_shows) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.tvShowList.adapter = adapter.apply { addAll(listOf()) }
-        fetchTvShowsList("ru")
+        fetchTvShowsList()
     }
 
     @ExperimentalSerializationApi
-    private fun fetchTvShowsList(language: String) {
-        val getTvShows = MovieApiClient.apiClient.getTvShowsResponse(language)
-        getTvShows.enqueue(object : Callback<MoviesListResponse<TvShowDto>> {
-            override fun onFailure(call: Call<MoviesListResponse<TvShowDto>>, t: Throwable) {
-                TODO("Not yet implemented")
-            }
-
-            override fun onResponse(
-                call: Call<MoviesListResponse<TvShowDto>>,
-                response: Response<MoviesListResponse<TvShowDto>>
-            ) {
-                val tvShowsDtoList = response.body()?.results ?: listOf()
+    private fun fetchTvShowsList() {
+        MovieApiClient.apiClient.getTvShowsResponse()
+            .prepare()
+            .subscribe { response ->
+                val tvShowsDtoList = response.results ?: listOf()
                 val tvShowsEntityList = tvShowsDtoList.map { tvShowDto ->
                     TvShowEntity(
                         tvShowId = tvShowDto.id ?: 0,
                         title = tvShowDto.name.orEmpty(),
                         voteAverage = tvShowDto.voteAverage ?: 0.0,
-                        posterUrl = "${BuildConfig.TMDB_RESOURCE_URL}w500${tvShowDto.backdropPath}"
+                        horizontalPosterUrl = "${BuildConfig.TMDB_RESOURCE_URL}w500${tvShowDto.backdropPath}"
                     )
                 }
-
                 val tvShowsList = tvShowsEntityList.map {
                     TvShowPreviewItem(it) {}
-                }.toList()
+                }
                 Timber.d("MyTAG_TvShowsFragment_onResponse(): $tvShowsEntityList")
                 adapter.apply { addAll(tvShowsList) }
             }
-        })
+            .let { compositeDisposable.addAll(it) }
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+        compositeDisposable.clear()
     }
 
     companion object {

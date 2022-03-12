@@ -55,4 +55,9 @@ ext {
     okhttp3Version = '5.0.0-alpha.5'
     kotlinxSerializationJsonVersion = '1.2.2'
     retrofit2Version = '2.9.0'
+    retrofit2Rxjava2AdapterVersion = '1.0.0'
+    retrofit2KotlinxSerializationConverterVersion = '0.8.0'
+
+    rxJava2Version = '2.2.21'
+    rxAndroidVersion = '2.1.1'
 }

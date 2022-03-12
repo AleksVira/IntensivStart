@@ -2,29 +2,33 @@ package ru.androidschool.intensiv.ui.feed
 
 import android.os.Bundle
 import android.view.*
+import android.widget.TextView
 import androidx.annotation.StringRes
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.navOptions
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.GroupieViewHolder
+import io.reactivex.Single
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
 import kotlinx.serialization.ExperimentalSerializationApi
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 import ru.androidschool.intensiv.BuildConfig
 import ru.androidschool.intensiv.R
-import ru.androidschool.intensiv.common.afterTextChanged
-import ru.androidschool.intensiv.domain.entity.MovieEntity
-import ru.androidschool.intensiv.databinding.FeedFragmentBinding
-import ru.androidschool.intensiv.databinding.FeedHeaderBinding
+import ru.androidschool.intensiv.common.prepare
 import ru.androidschool.intensiv.data.network.api.MovieApiClient
 import ru.androidschool.intensiv.data.network.dto.MovieDto
 import ru.androidschool.intensiv.data.network.dto.MoviesListResponse
+import ru.androidschool.intensiv.databinding.FeedFragmentBinding
+import ru.androidschool.intensiv.databinding.FeedHeaderBinding
+import ru.androidschool.intensiv.domain.entity.MovieEntity
+import ru.androidschool.intensiv.domain.entity.MovieListToShow
 import timber.log.Timber
 
 @ExperimentalSerializationApi
 class FeedFragment : Fragment(R.layout.feed_fragment) {
+
+    private val compositeDisposable = CompositeDisposable()
 
     private var _binding: FeedFragmentBinding? = null
     private var _searchBinding: FeedHeaderBinding? = null
@@ -37,6 +41,8 @@ class FeedFragment : Fragment(R.layout.feed_fragment) {
     private val adapter by lazy {
         GroupAdapter<GroupieViewHolder>()
     }
+
+    private lateinit var formSearchEditText: TextView
 
     private val options = navOptions {
         anim {
@@ -59,68 +65,65 @@ class FeedFragment : Fragment(R.layout.feed_fragment) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        formSearchEditText = searchBinding.searchToolbar.binding.searchEditText
 
-        searchBinding.searchToolbar.binding.searchEditText.afterTextChanged {
-            Timber.d(it.toString())
-            if (it.toString().length > MIN_LENGTH) {
-                openSearch(it.toString())
-            }
-        }
+        searchBinding.searchToolbar.onNewStringObservable()
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe { searchString ->
+                Timber.d("MyTAG_FeedFragment_onViewCreated(): WANT SEARCH $searchString")
+                startSearch(searchString)
+            }.let { compositeDisposable.addAll(it) }
+
         binding.moviesRecyclerView.adapter = adapter.apply { addAll(listOf()) }
-        fetchNowPlayingMovies("ru")
-        fetchUpcomingMovies("ru")
-        fetchPopularMovies("ru")
+        fetchNowPlayingMovies()
+        fetchUpcomingMovies()
+        fetchPopularMovies()
     }
 
-    private fun fetchNowPlayingMovies(language: String) {
-        val getNowPlayingMovies = MovieApiClient.apiClient.getNowPlayingMoviesResponse(language)
+    private fun fetchNowPlayingMovies() {
+        val getNowPlayingMovies = MovieApiClient.apiClient.getNowPlayingMoviesResponse()
         loadAndShowMoviesList(getNowPlayingMovies, R.string.recommended)
     }
 
-    private fun fetchUpcomingMovies(language: String) {
-        val getUpcomingMovies = MovieApiClient.apiClient.getUpcomingMoviesResponse(language)
+    private fun fetchUpcomingMovies() {
+        val getUpcomingMovies = MovieApiClient.apiClient.getUpcomingMoviesResponse()
         loadAndShowMoviesList(getUpcomingMovies, R.string.upcoming)
     }
 
-    private fun fetchPopularMovies(language: String) {
-        val getPopularMovies = MovieApiClient.apiClient.getPopularMoviesResponse(language)
+    private fun fetchPopularMovies() {
+        val getPopularMovies = MovieApiClient.apiClient.getPopularMoviesResponse()
         loadAndShowMoviesList(getPopularMovies, R.string.popular)
     }
 
     @ExperimentalSerializationApi
     private fun loadAndShowMoviesList(
-        getMoviesListMovies: Call<MoviesListResponse<MovieDto>>,
+        getMoviesListMovies: Single<MoviesListResponse<MovieDto>>,
         @StringRes title: Int
     ) {
-        getMoviesListMovies.enqueue(object : Callback<MoviesListResponse<MovieDto>> {
-            override fun onFailure(call: Call<MoviesListResponse<MovieDto>>, t: Throwable) {
-                TODO("Not yet implemented")
-            }
-
-            override fun onResponse(
-                call: Call<MoviesListResponse<MovieDto>>,
-                response: Response<MoviesListResponse<MovieDto>>
-            ) {
-                val moviesDtoList = response.body()?.results ?: listOf()
+        getMoviesListMovies
+            .prepare()
+            .subscribe { response ->
+                val moviesDtoList = response.results ?: listOf()
                 val moviesEntityList = moviesDtoList.map { movieDto ->
                     MovieEntity(
                         movieId = movieDto.id ?: 0,
                         title = movieDto.title.orEmpty(),
                         voteAverage = movieDto.voteAverage ?: 0.0,
-                        posterUrl = "${BuildConfig.TMDB_RESOURCE_URL}w500${movieDto.posterPath}"
+                        posterUrl = "${BuildConfig.TMDB_RESOURCE_URL}w500${movieDto.posterPath}",
+                        horizontalPosterUrl = "${BuildConfig.TMDB_RESOURCE_URL}w500${movieDto.backdropPath}"
                     )
                 }
-
                 val recommendedMoviesList = listOf(
                     MainCardContainer(
                         title,
-                        moviesEntityList.map { MovieItem(it) { movie -> openMovieDetails(movie) }
+                        moviesEntityList.map {
+                            MovieItem(it) { movie -> openMovieDetails(movie) }
                         }
                     )
                 )
                 adapter.apply { addAll(recommendedMoviesList) }
             }
-        })
+            .let { compositeDisposable.addAll(it) }
     }
 
     private fun openMovieDetails(movieEntity: MovieEntity) {
@@ -129,10 +132,39 @@ class FeedFragment : Fragment(R.layout.feed_fragment) {
         findNavController().navigate(action)
     }
 
-    private fun openSearch(searchText: String) {
-        val bundle = Bundle()
-        bundle.putString(KEY_SEARCH, searchText)
-        findNavController().navigate(R.id.search_dest, bundle, options)
+    private fun startSearch(initialString: String) {
+        Timber.d("MyTAG_FeedFragment_startSearch(): INITIAL = $initialString")
+        MovieApiClient.apiClient.searchMovieByTitle(initialString)
+            .prepare()
+            .doOnError {
+                Timber.d("MyTAG_FeedFragment_startSearch(): $it")
+            }
+            .doOnNext { response ->
+                if (initialString == formSearchEditText.text.toString()) {
+                    Timber.d("MyTAG_FeedFragment_startSearch(): CAN SHOW!")
+                    val moviesDtoList = response.results ?: listOf()
+                    val moviesEntityList = moviesDtoList.map { movieDto ->
+                        MovieEntity(
+                            movieId = movieDto.id ?: 0,
+                            title = movieDto.title.orEmpty(),
+                            voteAverage = movieDto.voteAverage ?: 0.0,
+                            posterUrl = "${BuildConfig.TMDB_RESOURCE_URL}w500${movieDto.posterPath}",
+                            horizontalPosterUrl = "${BuildConfig.TMDB_RESOURCE_URL}w500${movieDto.backdropPath}"
+                        )
+                    }
+                    showSearchResult(MovieListToShow(moviesEntityList), initialString)
+                } else {
+                    Timber.d("MyTAG_FeedFragment_startSearch(): SHOULD SEARCH AGAIN")
+                }
+            }
+            .subscribe()
+            .let { compositeDisposable.add(it) }
+    }
+
+    private fun showSearchResult(moviesEntityList: MovieListToShow, initialString: String) {
+        val searchAction = FeedFragmentDirections
+            .actionHomeDestToSearchDest(moviesEntityList, initialString)
+        findNavController().navigate(searchAction)
     }
 
     override fun onStop() {
@@ -148,10 +180,6 @@ class FeedFragment : Fragment(R.layout.feed_fragment) {
         super.onDestroyView()
         _binding = null
         _searchBinding = null
-    }
-
-    companion object {
-        const val MIN_LENGTH = 3
-        const val KEY_SEARCH = "search"
+        compositeDisposable.clear()
     }
 }
