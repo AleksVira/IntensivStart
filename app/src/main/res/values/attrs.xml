@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <attr name="progress_backgroundColor" format="color" />
+
     <declare-styleable name="SearchBar">
         <attr name="hint" format="string" />
         <attr name="cancel_visible" format="boolean" />
@@ -15,6 +17,10 @@
         <attr name="halfFilledStarImage" format="reference"/>
         <attr name="threeQuarterFilledStarImage" format="reference"/>
         <attr name="fullFilledStarImage" format="reference"/>
+    </declare-styleable>
+
+    <declare-styleable name="MovieProgressFormView">
+        <attr name="progress_backgroundColor" />
     </declare-styleable>
 
 </resources>

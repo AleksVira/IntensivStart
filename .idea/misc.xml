@@ -23,7 +23,7 @@
         <entry key="..\:/_teaching/AndroidSchool/project/IntensivStar/app/src/main/res/drawable/search_background.xml" value="0.2035" />
         <entry key="..\:/_teaching/AndroidSchool/project/IntensivStar/app/src/main/res/drawable/toolbar_background.xml" value="0.2035" />
         <entry key="..\:/_teaching/AndroidSchool/project/IntensivStar/app/src/main/res/layout/activity_main.xml" value="0.2609375" />
-        <entry key="..\:/_teaching/AndroidSchool/project/IntensivStar/app/src/main/res/layout/feed_fragment.xml" value="0.246875" />
+        <entry key="..\:/_teaching/AndroidSchool/project/IntensivStar/app/src/main/res/layout/feed_fragment.xml" value="0.12089136490250696" />
         <entry key="..\:/_teaching/AndroidSchool/project/IntensivStar/app/src/main/res/layout/feed_header.xml" value="0.246875" />
         <entry key="..\:/_teaching/AndroidSchool/project/IntensivStar/app/src/main/res/layout/fragment_movie_details.xml" value="0.264" />
         <entry key="..\:/_teaching/AndroidSchool/project/IntensivStar/app/src/main/res/layout/fragment_search.xml" value="0.24739583333333334" />
@@ -35,6 +35,7 @@
         <entry key="..\:/_teaching/AndroidSchool/project/IntensivStar/app/src/main/res/layout/item_tv_show.xml" value="0.2609375" />
         <entry key="..\:/_teaching/AndroidSchool/project/IntensivStar/app/src/main/res/layout/item_with_text.xml" value="0.2328125" />
         <entry key="..\:/_teaching/AndroidSchool/project/IntensivStar/app/src/main/res/layout/movie_details_fragment.xml" value="0.2609375" />
+        <entry key="..\:/_teaching/AndroidSchool/project/IntensivStar/app/src/main/res/layout/movie_view_progress_form.xml" value="0.2609375" />
         <entry key="..\:/_teaching/AndroidSchool/project/IntensivStar/app/src/main/res/layout/tv_shows_fragment.xml" value="0.24739583333333334" />
         <entry key="..\:/_teaching/AndroidSchool/project/IntensivStar/app/src/main/res/xml/network_security_config.xml" value="0.246875" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.12001811594202899" />
