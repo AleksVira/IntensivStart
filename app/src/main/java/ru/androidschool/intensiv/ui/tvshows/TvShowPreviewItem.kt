@@ -16,8 +16,7 @@ class TvShowPreviewItem(
 
     override fun bind(view: ItemTvShowBinding, position: Int) {
         view.tvShowDescription.text = content.title
-        view.tvShowRating.rating = content.rating
-
+        view.tvShowRating.rating = content.rating.div(20)
         view.tvShowImage.setOnClickListener {
             onClick.invoke(content)
         }

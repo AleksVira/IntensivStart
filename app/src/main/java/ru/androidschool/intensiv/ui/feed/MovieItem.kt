@@ -17,7 +17,7 @@ class MovieItem(
 
     override fun bind(view: ItemWithTextBinding, position: Int) {
         view.description.text = content.title
-        view.movieRating.rating = content.rating
+        view.movieRating.rating = content.rating.div(20)
         view.content.setOnClickListener {
             onClick.invoke(content)
         }

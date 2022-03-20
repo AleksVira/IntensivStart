@@ -20,9 +20,6 @@ class ProfileFragment : Fragment() {
     private lateinit var profileTabLayoutTitles: Array<String>
 
     private var _binding: FragmentProfileBinding? = null
-
-    // This property is only valid between onCreateView and
-    // onDestroyView.
     private val binding get() = requireNotNull(_binding)
 
     private var profilePageChangeCallback = object : ViewPager2.OnPageChangeCallback() {

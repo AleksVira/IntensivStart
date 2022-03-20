@@ -9,10 +9,7 @@ import kotlinx.parcelize.Parcelize
 data class MovieEntity(
     val movieId: Int,
     val title: String,
-    val voteAverage: Double,
+    val rating: Float,
     val posterUrl: String,
     val horizontalPosterUrl: String
-) : Parcelable {
-    val rating: Float
-        get() = voteAverage.div(2).toFloat()
-}
+) : Parcelable
