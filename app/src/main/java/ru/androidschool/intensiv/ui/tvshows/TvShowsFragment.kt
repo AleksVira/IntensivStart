@@ -7,22 +7,20 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.GroupieViewHolder
-import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.schedulers.Schedulers
 import kotlinx.serialization.ExperimentalSerializationApi
-import ru.androidschool.intensiv.BuildConfig
 import ru.androidschool.intensiv.R
 import ru.androidschool.intensiv.common.prepare
+import ru.androidschool.intensiv.data.mapper.TvShowDtoMapper
 import ru.androidschool.intensiv.data.network.api.MovieApiClient
 import ru.androidschool.intensiv.databinding.FragmentTvShowsBinding
-import ru.androidschool.intensiv.domain.entity.TvShowEntity
 import timber.log.Timber
 
 @ExperimentalSerializationApi
 class TvShowsFragment : Fragment(R.layout.fragment_tv_shows) {
 
     private val compositeDisposable = CompositeDisposable()
+    private val tvShowDtoMapper = TvShowDtoMapper()
 
     private var _binding: FragmentTvShowsBinding? = null
     private val binding get() = requireNotNull(_binding)
@@ -50,15 +48,16 @@ class TvShowsFragment : Fragment(R.layout.fragment_tv_shows) {
     private fun fetchTvShowsList() {
         MovieApiClient.apiClient.getTvShowsResponse()
             .prepare()
+            .doOnSubscribe {
+                binding.progressView.visibility = View.VISIBLE
+            }
+            .doFinally {
+                binding.progressView.visibility = View.GONE
+            }
             .subscribe { response ->
                 val tvShowsDtoList = response.results ?: listOf()
                 val tvShowsEntityList = tvShowsDtoList.map { tvShowDto ->
-                    TvShowEntity(
-                        tvShowId = tvShowDto.id ?: 0,
-                        title = tvShowDto.name.orEmpty(),
-                        voteAverage = tvShowDto.voteAverage ?: 0.0,
-                        horizontalPosterUrl = "${BuildConfig.TMDB_RESOURCE_URL}w500${tvShowDto.backdropPath}"
-                    )
+                    tvShowDtoMapper.mapTo(tvShowDto)
                 }
                 val tvShowsList = tvShowsEntityList.map {
                     TvShowPreviewItem(it) {}

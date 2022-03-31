@@ -109,6 +109,17 @@
             app:layout_constraintTop_toBottomOf="@id/detail_button"
             tools:text="@tools:sample/lorem/random" />
 
+
+        <ru.androidschool.intensiv.ui.custom.MovieProgressFormView
+            android:id="@+id/progress_view"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:visibility="visible"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/detail_description_text"
+            app:progress_backgroundColor="@color/blueDark" />
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/detail_actors_list"
             android:layout_width="0dp"
@@ -124,7 +135,14 @@
             tools:listitem="@layout/item_actor_info" />
 
         <androidx.constraintlayout.widget.Barrier
-            android:id="@+id/detail_barrier"
+            android:id="@+id/detail_actors_barrier"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:barrierDirection="bottom"
+            app:constraint_referenced_ids="detail_actors_list, progress_view" />
+
+        <androidx.constraintlayout.widget.Barrier
+            android:id="@+id/detail_labels_barrier"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:barrierDirection="right"
@@ -137,13 +155,13 @@
             android:layout_marginTop="@dimen/material_margin_normal"
             android:text="@string/studio_label"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/detail_actors_list" />
+            app:layout_constraintTop_toBottomOf="@id/detail_actors_barrier" />
 
         <TextView
             android:id="@+id/studio_name_text"
             style="@style/detail_text"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/detail_barrier"
+            app:layout_constraintStart_toEndOf="@id/detail_labels_barrier"
             app:layout_constraintTop_toTopOf="@id/studio_label"
             tools:text="Warner Bros" />
 
@@ -166,7 +184,7 @@
             android:id="@+id/genre_text"
             style="@style/detail_text"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/detail_barrier"
+            app:layout_constraintStart_toEndOf="@id/detail_labels_barrier"
             app:layout_constraintTop_toTopOf="@id/genre_label"
             tools:text="Action, Adventure, Fantasy" />
 
@@ -192,7 +210,7 @@
             android:id="@+id/year_text"
             style="@style/detail_text"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/detail_barrier"
+            app:layout_constraintStart_toEndOf="@id/detail_labels_barrier"
             app:layout_constraintTop_toTopOf="@id/year_label"
             tools:text="2018" />
 

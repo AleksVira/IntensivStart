@@ -8,19 +8,14 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.navArgs
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.GroupieViewHolder
-import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.schedulers.Schedulers
 import kotlinx.serialization.ExperimentalSerializationApi
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import ru.androidschool.intensiv.BuildConfig
 import ru.androidschool.intensiv.R
 import ru.androidschool.intensiv.common.loadImage
 import ru.androidschool.intensiv.common.prepare
+import ru.androidschool.intensiv.data.mapper.ActorMapper
+import ru.androidschool.intensiv.data.mapper.MovieDetailsInfoMapper
 import ru.androidschool.intensiv.data.network.api.MovieApiClient
-import ru.androidschool.intensiv.data.network.dto.MovieDetailInfoResponse
 import ru.androidschool.intensiv.databinding.FragmentMovieDetailsBinding
 import ru.androidschool.intensiv.domain.entity.ActorInfoEntity
 import ru.androidschool.intensiv.domain.entity.MovieDetailsEntity
@@ -30,6 +25,8 @@ import timber.log.Timber
 class MovieDetailsFragment : Fragment(R.layout.fragment_movie_details) {
 
     private val compositeDisposable = CompositeDisposable()
+    private val movieDetailsInfoMapper = MovieDetailsInfoMapper()
+    private val actorMapper = ActorMapper()
 
     private var _binding: FragmentMovieDetailsBinding? = null
     private val binding get() = requireNotNull(_binding)
@@ -77,25 +74,10 @@ class MovieDetailsFragment : Fragment(R.layout.fragment_movie_details) {
                 Timber.d("MyTAG_MovieDetailsFragment_fetchDetailMovieInfo(): $it")
             }
             .subscribe { response ->
-                response.apply {
-                    MovieDetailsEntity(
-                        movieImageUrl = "${BuildConfig.TMDB_RESOURCE_URL}w500${response.backdropPath}",
-                        movieName = title.orEmpty(),
-                        isLiked = false,
-                        watchLink = "",
-                        movieRating = voteAverage?.toFloat() ?: 0F,
-                        movieDescription = overview.orEmpty(),
-                        studioName = productionCompanies?.map { company ->
-                            company.name
-                        }?.joinToString().orEmpty(),
-                        genre = genres?.map { genre ->
-                            genre.name
-                        }?.joinToString()?.replaceFirstChar(Char::titlecase).orEmpty(),
-                        year = releaseDate.orEmpty()
-                    ).also { movieDetail ->
+                movieDetailsInfoMapper.mapTo(response)
+                    .also { movieDetail ->
                         bindDetails(movieDetail)
                     }
-                }
             }
             .let {
                 compositeDisposable.addAll(it)
@@ -105,13 +87,18 @@ class MovieDetailsFragment : Fragment(R.layout.fragment_movie_details) {
     private fun fetchCredits(movieId: Int) {
         MovieApiClient.apiClient.getMoviePersonsById(movieId)
             .prepare()
+            .doOnSubscribe {
+                binding.progressView.visibility = View.VISIBLE
+                binding.detailActorsList.visibility = View.GONE
+            }
+            .doFinally {
+                binding.progressView.visibility = View.GONE
+                binding.detailActorsList.visibility = View.VISIBLE
+            }
             .subscribe { response ->
                 val newActorsListItems = response.cast?.map { cast ->
                     ActorInfoItem(
-                        content = ActorInfoEntity(
-                            imageUrl = "${BuildConfig.TMDB_RESOURCE_URL}w500${cast.profilePath}",
-                            fullName = cast.originalName.orEmpty()
-                        ),
+                        content = actorMapper.mapTo(cast),
                         onClick = { name ->
                             Timber.d("MyTAG_MovieDetailsFragment_bindDetails(): $name")
                         }

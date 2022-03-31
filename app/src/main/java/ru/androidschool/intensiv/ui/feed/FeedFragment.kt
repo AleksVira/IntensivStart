@@ -2,6 +2,8 @@ package ru.androidschool.intensiv.ui.feed
 
 import android.os.Bundle
 import android.view.*
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.widget.TextView
 import androidx.annotation.StringRes
 import androidx.fragment.app.Fragment
@@ -13,9 +15,9 @@ import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.serialization.ExperimentalSerializationApi
-import ru.androidschool.intensiv.BuildConfig
 import ru.androidschool.intensiv.R
 import ru.androidschool.intensiv.common.prepare
+import ru.androidschool.intensiv.data.mapper.MovieDtoMapper
 import ru.androidschool.intensiv.data.network.api.MovieApiClient
 import ru.androidschool.intensiv.data.network.dto.MovieDto
 import ru.androidschool.intensiv.data.network.dto.MoviesListResponse
@@ -29,6 +31,7 @@ import timber.log.Timber
 class FeedFragment : Fragment(R.layout.feed_fragment) {
 
     private val compositeDisposable = CompositeDisposable()
+    private val movieDtoMapper = MovieDtoMapper()
 
     private var _binding: FeedFragmentBinding? = null
     private var _searchBinding: FeedHeaderBinding? = null
@@ -75,56 +78,74 @@ class FeedFragment : Fragment(R.layout.feed_fragment) {
             }.let { compositeDisposable.addAll(it) }
 
         binding.moviesRecyclerView.adapter = adapter.apply { addAll(listOf()) }
-        fetchNowPlayingMovies()
-        fetchUpcomingMovies()
-        fetchPopularMovies()
+        fetchAllMovies()
     }
 
-    private fun fetchNowPlayingMovies() {
-        val getNowPlayingMovies = MovieApiClient.apiClient.getNowPlayingMoviesResponse()
-        loadAndShowMoviesList(getNowPlayingMovies, R.string.recommended)
-    }
-
-    private fun fetchUpcomingMovies() {
-        val getUpcomingMovies = MovieApiClient.apiClient.getUpcomingMoviesResponse()
-        loadAndShowMoviesList(getUpcomingMovies, R.string.upcoming)
-    }
-
-    private fun fetchPopularMovies() {
-        val getPopularMovies = MovieApiClient.apiClient.getPopularMoviesResponse()
-        loadAndShowMoviesList(getPopularMovies, R.string.popular)
-    }
-
-    @ExperimentalSerializationApi
-    private fun loadAndShowMoviesList(
-        getMoviesListMovies: Single<MoviesListResponse<MovieDto>>,
-        @StringRes title: Int
-    ) {
-        getMoviesListMovies
-            .prepare()
-            .subscribe { response ->
-                val moviesDtoList = response.results ?: listOf()
-                val moviesEntityList = moviesDtoList.map { movieDto ->
-                    MovieEntity(
-                        movieId = movieDto.id ?: 0,
-                        title = movieDto.title.orEmpty(),
-                        voteAverage = movieDto.voteAverage ?: 0.0,
-                        posterUrl = "${BuildConfig.TMDB_RESOURCE_URL}w500${movieDto.posterPath}",
-                        horizontalPosterUrl = "${BuildConfig.TMDB_RESOURCE_URL}w500${movieDto.backdropPath}"
-                    )
+    private fun fetchAllMovies() {
+        val getNowPlayingMovies: Single<MoviesListResponse<MovieDto>> =
+            MovieApiClient.apiClient.getNowPlayingMoviesResponse()
+                .onErrorReturn {
+                    Timber.d("MyTAG_FeedFragment_fetchAllMovies() ERROR in ${R.string.recommended}")
+                    MoviesListResponse()
                 }
-                val recommendedMoviesList = listOf(
-                    MainCardContainer(
-                        title,
-                        moviesEntityList.map {
-                            MovieItem(it) { movie -> openMovieDetails(movie) }
-                        }
-                    )
-                )
-                adapter.apply { addAll(recommendedMoviesList) }
+        val getUpcomingMovies: Single<MoviesListResponse<MovieDto>> =
+            MovieApiClient.apiClient.getUpcomingMoviesResponse()
+                .onErrorReturn {
+                    Timber.d("MyTAG_FeedFragment_fetchAllMovies() ERROR in ${R.string.upcoming}")
+                    MoviesListResponse()
+                }
+        val getPopularMovies: Single<MoviesListResponse<MovieDto>> =
+            MovieApiClient.apiClient.getPopularMoviesResponse()
+                .onErrorReturn {
+                    Timber.d("MyTAG_FeedFragment_fetchAllMovies() ERROR in ${R.string.popular}")
+                    MoviesListResponse()
+                }
+
+        Single.zip(
+            getNowPlayingMovies,
+            getUpcomingMovies,
+            getPopularMovies
+        ) { nowPlayingList: MoviesListResponse<MovieDto>,
+            upcomingList: MoviesListResponse<MovieDto>,
+            popularList: MoviesListResponse<MovieDto> ->
+            UnitedMoviesList(nowPlayingList, upcomingList, popularList)
+        }
+            .prepare()
+            .doOnSubscribe {
+                binding.progressView.visibility = VISIBLE
+            }
+            .doFinally {
+                binding.progressView.visibility = GONE
+            }
+            .subscribe { response ->
+                val nowPlayingMovies = response.nowPlayingList.results ?: listOf()
+                val upcomingMovies = response.upcomingList.results ?: listOf()
+                val popularMovies = response.popularList.results ?: listOf()
+
+                val nowPlayingItems = convertToItems(R.string.recommended, nowPlayingMovies.map {
+                    movieDtoMapper.mapTo(it)
+                })
+                val upcomingItems = convertToItems(R.string.upcoming, upcomingMovies.map {
+                    movieDtoMapper.mapTo(it)
+                })
+                val popularItems = convertToItems(R.string.popular, popularMovies.map {
+                    movieDtoMapper.mapTo(it)
+                })
+                adapter.apply { addAll(nowPlayingItems + upcomingItems + popularItems) }
             }
             .let { compositeDisposable.addAll(it) }
     }
+
+    private fun convertToItems(@StringRes header: Int, nowPlayingList: List<MovieEntity>) =
+        listOf(
+            MainCardContainer(
+                header,
+                nowPlayingList.map {
+                    MovieItem(it) { movie -> openMovieDetails(movie) }
+                }
+            )
+        )
+
 
     private fun openMovieDetails(movieEntity: MovieEntity) {
         val action =
@@ -136,6 +157,12 @@ class FeedFragment : Fragment(R.layout.feed_fragment) {
         Timber.d("MyTAG_FeedFragment_startSearch(): INITIAL = $initialString")
         MovieApiClient.apiClient.searchMovieByTitle(initialString)
             .prepare()
+            .doOnSubscribe {
+                binding.progressView.visibility = VISIBLE
+            }
+            .doFinally {
+                binding.progressView.visibility = GONE
+            }
             .doOnError {
                 Timber.d("MyTAG_FeedFragment_startSearch(): $it")
             }
@@ -144,13 +171,7 @@ class FeedFragment : Fragment(R.layout.feed_fragment) {
                     Timber.d("MyTAG_FeedFragment_startSearch(): CAN SHOW!")
                     val moviesDtoList = response.results ?: listOf()
                     val moviesEntityList = moviesDtoList.map { movieDto ->
-                        MovieEntity(
-                            movieId = movieDto.id ?: 0,
-                            title = movieDto.title.orEmpty(),
-                            voteAverage = movieDto.voteAverage ?: 0.0,
-                            posterUrl = "${BuildConfig.TMDB_RESOURCE_URL}w500${movieDto.posterPath}",
-                            horizontalPosterUrl = "${BuildConfig.TMDB_RESOURCE_URL}w500${movieDto.backdropPath}"
-                        )
+                        movieDtoMapper.mapTo(movieDto)
                     }
                     showSearchResult(MovieListToShow(moviesEntityList), initialString)
                 } else {
