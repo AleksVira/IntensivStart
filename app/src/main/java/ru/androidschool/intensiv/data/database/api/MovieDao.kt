@@ -15,7 +15,7 @@ interface MovieDao {
     fun deleteMovie(movie: MovieDbEntity): Completable
 
     @Query("SELECT EXISTS (SELECT 1 FROM moviesManyToMany WHERE movieId = :movieId)")
-    fun exist(movieId: Int): Single<Boolean>
+    fun isExist(movieId: Int): Single<Boolean>
 
     @Transaction
     @Query("DELETE FROM moviesManyToMany WHERE movieId = :movieId")

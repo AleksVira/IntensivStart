@@ -3,6 +3,7 @@ package ru.androidschool.intensiv.ui.feed
 import android.view.View
 import com.xwray.groupie.viewbinding.BindableItem
 import ru.androidschool.intensiv.R
+import ru.androidschool.intensiv.common.convertToStars
 import ru.androidschool.intensiv.common.loadImage
 import ru.androidschool.intensiv.domain.entity.MovieEntity
 import ru.androidschool.intensiv.databinding.ItemWithTextBinding
@@ -17,7 +18,7 @@ class MovieItem(
 
     override fun bind(view: ItemWithTextBinding, position: Int) {
         view.description.text = content.title
-        view.movieRating.rating = content.rating.div(20)
+        view.movieRating.rating = content.rating.convertToStars()
         view.content.setOnClickListener {
             onClick.invoke(content)
         }

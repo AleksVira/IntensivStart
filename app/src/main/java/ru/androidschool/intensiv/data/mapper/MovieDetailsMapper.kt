@@ -1,6 +1,7 @@
 package ru.androidschool.intensiv.data.mapper
 
 import ru.androidschool.intensiv.common.generateImagePath
+import ru.androidschool.intensiv.common.voteToRating
 import ru.androidschool.intensiv.data.network.dto.MovieDetailInfoResponse
 import ru.androidschool.intensiv.domain.entity.MovieDetailsEntity
 
@@ -11,7 +12,7 @@ class MovieDetailsMapper : BaseMapper<MovieDetailInfoResponse, MovieDetailsEntit
             movieImageUrl = generateImagePath(from.backdropPath.orEmpty()),
             movieName = from.title.orEmpty(),
             watchLink = "",
-            movieRating = from.voteAverage?.toFloat()?.times(10) ?: 0F,
+            movieRating = from.voteAverage?.voteToRating() ?: 0F,
             movieDescription = from.overview.orEmpty(),
             studioName = from.productionCompanies?.map { company ->
                 company.name

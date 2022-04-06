@@ -61,4 +61,5 @@ ext {
     rxJava2Version = '2.2.21'
     rxAndroidVersion = '2.1.1'
     roomVersion = '2.4.2'
+    archPersistenceRoomVersion = '1.1.1'
 }

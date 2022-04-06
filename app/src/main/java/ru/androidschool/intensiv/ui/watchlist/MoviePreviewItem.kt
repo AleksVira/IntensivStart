@@ -20,7 +20,6 @@ class MoviePreviewItem(
         view.apply {
             view.imagePreview.setOnClickListener {}
             if (content.movie.posterUrl.isNotBlank()) {
-                Timber.d("MyTAG_MoviePreviewItem_bind(): NOT BLANK")
                 view.imagePreview
                     .loadImage(content.movie.posterUrl)
             }

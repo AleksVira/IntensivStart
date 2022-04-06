@@ -22,11 +22,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:fontFamily="sans-serif-black"
-
         android:gravity="center"
         android:maxLines="4"
-
-
-        android:text="Название фильма"
+        tools:text="Название фильма"
         android:textColor="@color/white" />
 </LinearLayout>

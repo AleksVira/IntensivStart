@@ -81,7 +81,6 @@ class MovieDetailsFragment : Fragment(R.layout.fragment_movie_details) {
             if (::currentDetailsForDb.isInitialized && this::currentActors.isInitialized) {
                 repository.saveToDb(currentDetailsForDb, currentActors)
                     .subscribeOn(Schedulers.io())
-                    .delay(400, TimeUnit.MILLISECONDS)
                     .observeOn(AndroidSchedulers.mainThread())
                     .doOnSubscribe {
                         binding.progressView.visibility = View.VISIBLE
@@ -91,7 +90,6 @@ class MovieDetailsFragment : Fragment(R.layout.fragment_movie_details) {
                     }
                     .subscribe {
                         setNewIconSelectedState(!isSelectedMovie)
-                        Timber.d("MyTAG_MovieDetailsFragment_onViewCreated(): SAVED TO DB")
                     }.let {
                         compositeDisposable.addAll(it)
                     }
