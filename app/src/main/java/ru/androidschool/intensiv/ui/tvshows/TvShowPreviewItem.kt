@@ -3,6 +3,7 @@ package ru.androidschool.intensiv.ui.tvshows
 import android.view.View
 import com.xwray.groupie.viewbinding.BindableItem
 import ru.androidschool.intensiv.R
+import ru.androidschool.intensiv.common.convertToStars
 import ru.androidschool.intensiv.common.loadImage
 import ru.androidschool.intensiv.databinding.ItemTvShowBinding
 import ru.androidschool.intensiv.domain.entity.TvShowEntity
@@ -16,8 +17,7 @@ class TvShowPreviewItem(
 
     override fun bind(view: ItemTvShowBinding, position: Int) {
         view.tvShowDescription.text = content.title
-        view.tvShowRating.rating = content.rating
-
+        view.tvShowRating.rating = content.rating.convertToStars()
         view.tvShowImage.setOnClickListener {
             onClick.invoke(content)
         }

@@ -13,7 +13,7 @@ object MockRepository {
             val movie = MovieEntity(
                 movieId = x,
                 title = "Spider-Man $x",
-                voteAverage = 10.0 - x,
+                rating = 5f - x/2,
                 posterUrl = "https://m.media-amazon.com/images/M/MV5BYTk3MDljOWQtNGI2My00OTEzLTlhYjQtOTQ4ODM2MzUwY2IwXkEyXkFqcGdeQXVyNTIzOTk5ODM@._V1_.jpg",
                 horizontalPosterUrl = "https://m.media-amazon.com/images/M/MV5BYTk3MDljOWQtNGI2My00OTEzLTlhYjQtOTQ4ODM2MzUwY2IwXkEyXkFqcGdeQXVyNTIzOTk5ODM@._V1_.jpg"
             )
@@ -28,7 +28,7 @@ object MockRepository {
             MovieEntity(
                 movieId = it,
                 title = "Super Show $it",
-                voteAverage = 10.0 - it,
+                rating = 5f - it/2,
                 posterUrl = "https://m.media-amazon.com/images/M/MV5BYTk3MDljOWQtNGI2My00OTEzLTlhYjQtOTQ4ODM2MzUwY2IwXkEyXkFqcGdeQXVyNTIzOTk5ODM@._V1_.jpg",
                 horizontalPosterUrl = "https://m.media-amazon.com/images/M/MV5BYTk3MDljOWQtNGI2My00OTEzLTlhYjQtOTQ4ODM2MzUwY2IwXkEyXkFqcGdeQXVyNTIzOTk5ODM@._V1_.jpg"
             )
@@ -36,21 +36,23 @@ object MockRepository {
 
     fun getMovieDetails(movieId: Int): MovieDetailsEntity {
         return MovieDetailsEntity(
+            id = 0,
             movieImageUrl = "https://www.themoviedb.org/t/p/original/vBEpnpabTNAD4Boum5JIomBJYJy.jpg",
             movieName = "Красное уведомление",
-            isLiked = false,
             watchLink = "",
             movieRating = 68.0f,
             movieDescription = "Действие фильма начинает своё развитие в тот момент, когда подходит к своему завершению выпущенное Интерполом «Красное уведомление». Оно предполагает высший ордер, требующий активизировать охоту и поимку самых разыскиваемых в мире людей. В центре истории оказывается опытный сотрудник ФБР по имени Джон Хартли. За свою карьеру он провёл немало задержаний. И в этот раз ему кажется, что всё пройдёт гладко. Но Хартли ошибается.",
             studioName = "Red Notice Studio",
             genre = "боевик, комедия, криминал, триллер",
-            year ="2021"
+            year ="2021",
+            posterPath = ""
         )
     }
 
     private fun getActorsMockedlist(): List<ActorInfoEntity> =
         (1..6).map {
             ActorInfoEntity(
+                id = it,
                 imageUrl = "https://www.themoviedb.org/t/p/original/viKVMpGgsKRrzl5ZqkzrR3RJQxn.jpg",
                 fullName = "Dwayne Johnson $it"
             )

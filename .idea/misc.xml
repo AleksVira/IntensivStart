@@ -10,6 +10,8 @@
         <entry key="..\:/_teaching/AndroidSchool/project/IntensivStar/app/src/main/res/drawable/ic_delete.xml" value="0.2035" />
         <entry key="..\:/_teaching/AndroidSchool/project/IntensivStar/app/src/main/res/drawable/ic_favorite.xml" value="0.2035" />
         <entry key="..\:/_teaching/AndroidSchool/project/IntensivStar/app/src/main/res/drawable/ic_launcher_background.xml" value="0.2035" />
+        <entry key="..\:/_teaching/AndroidSchool/project/IntensivStar/app/src/main/res/drawable/ic_like.xml" value="0.1935" />
+        <entry key="..\:/_teaching/AndroidSchool/project/IntensivStar/app/src/main/res/drawable/ic_like_filled.xml" value="0.1935" />
         <entry key="..\:/_teaching/AndroidSchool/project/IntensivStar/app/src/main/res/drawable/ic_star_icon_1_2.xml" value="0.2035" />
         <entry key="..\:/_teaching/AndroidSchool/project/IntensivStar/app/src/main/res/drawable/ic_star_icon_1_4.xml" value="0.2035" />
         <entry key="..\:/_teaching/AndroidSchool/project/IntensivStar/app/src/main/res/drawable/ic_star_icon_3_4.xml" value="0.2035" />
@@ -19,6 +21,7 @@
         <entry key="..\:/_teaching/AndroidSchool/project/IntensivStar/app/src/main/res/drawable/ic_wave_big.xml" value="0.2035" />
         <entry key="..\:/_teaching/AndroidSchool/project/IntensivStar/app/src/main/res/drawable/ic_wave_second.xml" value="0.2035" />
         <entry key="..\:/_teaching/AndroidSchool/project/IntensivStar/app/src/main/res/drawable/ic_wave_third.xml" value="0.2035" />
+        <entry key="..\:/_teaching/AndroidSchool/project/IntensivStar/app/src/main/res/drawable/like_selector.xml" value="0.1935" />
         <entry key="..\:/_teaching/AndroidSchool/project/IntensivStar/app/src/main/res/drawable/list_background.xml" value="0.2035" />
         <entry key="..\:/_teaching/AndroidSchool/project/IntensivStar/app/src/main/res/drawable/search_background.xml" value="0.2035" />
         <entry key="..\:/_teaching/AndroidSchool/project/IntensivStar/app/src/main/res/drawable/toolbar_background.xml" value="0.2035" />
@@ -26,12 +29,13 @@
         <entry key="..\:/_teaching/AndroidSchool/project/IntensivStar/app/src/main/res/layout/feed_fragment.xml" value="0.12089136490250696" />
         <entry key="..\:/_teaching/AndroidSchool/project/IntensivStar/app/src/main/res/layout/feed_header.xml" value="0.246875" />
         <entry key="..\:/_teaching/AndroidSchool/project/IntensivStar/app/src/main/res/layout/fragment_movie_details.xml" value="0.264" />
+        <entry key="..\:/_teaching/AndroidSchool/project/IntensivStar/app/src/main/res/layout/fragment_profile.xml" value="0.246875" />
         <entry key="..\:/_teaching/AndroidSchool/project/IntensivStar/app/src/main/res/layout/fragment_search.xml" value="0.24739583333333334" />
         <entry key="..\:/_teaching/AndroidSchool/project/IntensivStar/app/src/main/res/layout/fragment_tv_shows.xml" value="0.2609375" />
         <entry key="..\:/_teaching/AndroidSchool/project/IntensivStar/app/src/main/res/layout/fragment_watchlist.xml" value="0.2609375" />
         <entry key="..\:/_teaching/AndroidSchool/project/IntensivStar/app/src/main/res/layout/item_actor_info.xml" value="0.536" />
         <entry key="..\:/_teaching/AndroidSchool/project/IntensivStar/app/src/main/res/layout/item_search_movie_preview.xml" value="0.2328125" />
-        <entry key="..\:/_teaching/AndroidSchool/project/IntensivStar/app/src/main/res/layout/item_small.xml" value="0.2328125" />
+        <entry key="..\:/_teaching/AndroidSchool/project/IntensivStar/app/src/main/res/layout/item_small.xml" value="0.264" />
         <entry key="..\:/_teaching/AndroidSchool/project/IntensivStar/app/src/main/res/layout/item_tv_show.xml" value="0.2609375" />
         <entry key="..\:/_teaching/AndroidSchool/project/IntensivStar/app/src/main/res/layout/item_with_text.xml" value="0.2328125" />
         <entry key="..\:/_teaching/AndroidSchool/project/IntensivStar/app/src/main/res/layout/movie_details_fragment.xml" value="0.2609375" />

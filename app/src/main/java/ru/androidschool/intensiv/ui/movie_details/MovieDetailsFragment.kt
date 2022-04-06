@@ -8,25 +8,39 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.navArgs
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.GroupieViewHolder
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.schedulers.Schedulers
 import kotlinx.serialization.ExperimentalSerializationApi
 import ru.androidschool.intensiv.R
 import ru.androidschool.intensiv.common.loadImage
 import ru.androidschool.intensiv.common.prepare
+import ru.androidschool.intensiv.common.setThrottleClickListener
+import ru.androidschool.intensiv.data.database.entity.ActorDbEntity
+import ru.androidschool.intensiv.data.database.entity.MovieDbEntity
 import ru.androidschool.intensiv.data.mapper.ActorMapper
-import ru.androidschool.intensiv.data.mapper.MovieDetailsInfoMapper
+import ru.androidschool.intensiv.data.mapper.DbActorsMapper
+import ru.androidschool.intensiv.data.mapper.DbMovieDetailsMapper
+import ru.androidschool.intensiv.data.mapper.MovieDetailsMapper
 import ru.androidschool.intensiv.data.network.api.MovieApiClient
+import ru.androidschool.intensiv.data.repository.SelectedMovieRepository
 import ru.androidschool.intensiv.databinding.FragmentMovieDetailsBinding
-import ru.androidschool.intensiv.domain.entity.ActorInfoEntity
 import ru.androidschool.intensiv.domain.entity.MovieDetailsEntity
 import timber.log.Timber
+import java.util.concurrent.TimeUnit
 
 @ExperimentalSerializationApi
 class MovieDetailsFragment : Fragment(R.layout.fragment_movie_details) {
 
     private val compositeDisposable = CompositeDisposable()
-    private val movieDetailsInfoMapper = MovieDetailsInfoMapper()
+    private val movieDetailsInfoMapper = MovieDetailsMapper()
     private val actorMapper = ActorMapper()
+    private val dbMovieDetailsMapper = DbMovieDetailsMapper()
+    private val dbActorsMapper = DbActorsMapper()
+    private var isSelectedMovie = false
+
+    private lateinit var currentDetailsForDb: MovieDbEntity
+    private lateinit var currentActors: List<ActorDbEntity>
 
     private var _binding: FragmentMovieDetailsBinding? = null
     private val binding get() = requireNotNull(_binding)
@@ -36,6 +50,8 @@ class MovieDetailsFragment : Fragment(R.layout.fragment_movie_details) {
     }
 
     private val args: MovieDetailsFragmentArgs by navArgs()
+
+    private lateinit var repository: SelectedMovieRepository
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -48,11 +64,56 @@ class MovieDetailsFragment : Fragment(R.layout.fragment_movie_details) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        repository = SelectedMovieRepository(requireContext())
         binding.arrowBackImage.setOnClickListener { onBackPressed() }
         args.movieId.let { movieId ->
             fetchDetailMovieInfo(movieId)
-            fetchCredits(movieId)
+            fetchActors(movieId)
+            checkSelectedMovies(movieId)
         }
+        binding.likeImage.setThrottleClickListener {
+            changeSelectedState()
+        }
+    }
+
+    private fun changeSelectedState() {
+        if (!isSelectedMovie) {
+            if (::currentDetailsForDb.isInitialized && this::currentActors.isInitialized) {
+                repository.saveToDb(currentDetailsForDb, currentActors)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .doOnSubscribe {
+                        binding.progressView.visibility = View.VISIBLE
+                    }
+                    .doFinally {
+                        binding.progressView.visibility = View.GONE
+                    }
+                    .subscribe {
+                        setNewIconSelectedState(!isSelectedMovie)
+                    }.let {
+                        compositeDisposable.addAll(it)
+                    }
+            }
+        } else {
+            repository.deleteMovieById(currentDetailsForDb.movieId)
+                .prepare()
+                .subscribe {
+                    Timber.d("MyTAG_MovieDetailsFragment_changeSelectedState(): DELETED! ${currentDetailsForDb.movieId}")
+                }.let {
+                    compositeDisposable.addAll(it)
+                }
+            setNewIconSelectedState(!isSelectedMovie)
+        }
+    }
+
+    private fun setNewIconSelectedState(isSelected: Boolean) {
+        isSelectedMovie = isSelected
+        val drawableRes = if (isSelected) {
+            R.drawable.ic_like_filled
+        } else {
+            R.drawable.ic_like
+        }
+        binding.likeImage.setImageResource(drawableRes)
     }
 
     private fun bindDetails(movieDetails: MovieDetailsEntity) {
@@ -76,6 +137,7 @@ class MovieDetailsFragment : Fragment(R.layout.fragment_movie_details) {
             .subscribe { response ->
                 movieDetailsInfoMapper.mapTo(response)
                     .also { movieDetail ->
+                        currentDetailsForDb = dbMovieDetailsMapper.mapTo(movieDetail)
                         bindDetails(movieDetail)
                     }
             }
@@ -84,7 +146,18 @@ class MovieDetailsFragment : Fragment(R.layout.fragment_movie_details) {
             }
     }
 
-    private fun fetchCredits(movieId: Int) {
+    private fun checkSelectedMovies(movieId: Int) {
+        repository.checkSavedMovieById(movieId)
+            .prepare()
+            .subscribe { result ->
+                setNewIconSelectedState(result)
+                Timber.d("MyTAG_MovieDetailsFragment_checkSelectedMovies(): $result")
+            }.let {
+                compositeDisposable.addAll(it)
+            }
+    }
+
+    private fun fetchActors(movieId: Int) {
         MovieApiClient.apiClient.getMoviePersonsById(movieId)
             .prepare()
             .doOnSubscribe {
@@ -95,17 +168,22 @@ class MovieDetailsFragment : Fragment(R.layout.fragment_movie_details) {
                 binding.progressView.visibility = View.GONE
                 binding.detailActorsList.visibility = View.VISIBLE
             }
-            .subscribe { response ->
-                val newActorsListItems = response.cast?.map { cast ->
+            .subscribe { movieCreditsResponse ->
+                val newActorsListEntities = movieCreditsResponse.cast?.map { cast ->
+                    actorMapper.mapTo(cast)
+                } ?: listOf()
+                currentActors = dbActorsMapper.mapTo(newActorsListEntities)
+                newActorsListEntities.map { singleActorInfo ->
                     ActorInfoItem(
-                        content = actorMapper.mapTo(cast),
+                        singleActorInfo,
                         onClick = { name ->
                             Timber.d("MyTAG_MovieDetailsFragment_bindDetails(): $name")
                         }
                     )
-                } ?: listOf()
-                binding.detailActorsList.adapter = detailsAdapter.apply {
-                    addAll(newActorsListItems)
+                }.let { actorsList ->
+                    binding.detailActorsList.adapter = detailsAdapter.apply {
+                        addAll(actorsList)
+                    }
                 }
             }
             .let {
@@ -122,5 +200,4 @@ class MovieDetailsFragment : Fragment(R.layout.fragment_movie_details) {
         _binding = null
         compositeDisposable.clear()
     }
-
 }

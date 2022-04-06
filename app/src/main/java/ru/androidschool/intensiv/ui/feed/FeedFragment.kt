@@ -202,5 +202,6 @@ class FeedFragment : Fragment(R.layout.feed_fragment) {
         _binding = null
         _searchBinding = null
         compositeDisposable.clear()
+        adapter.clear()
     }
 }
