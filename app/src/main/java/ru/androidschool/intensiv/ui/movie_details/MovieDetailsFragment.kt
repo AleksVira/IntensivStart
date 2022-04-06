@@ -80,8 +80,7 @@ class MovieDetailsFragment : Fragment(R.layout.fragment_movie_details) {
         if (!isSelectedMovie) {
             if (::currentDetailsForDb.isInitialized && this::currentActors.isInitialized) {
                 repository.saveToDb(currentDetailsForDb, currentActors)
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
+                    .prepare()
                     .doOnSubscribe {
                         binding.progressView.visibility = View.VISIBLE
                     }
