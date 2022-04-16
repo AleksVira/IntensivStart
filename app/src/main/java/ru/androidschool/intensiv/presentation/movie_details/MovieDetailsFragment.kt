@@ -1,4 +1,4 @@
-package ru.androidschool.intensiv.ui.movie_details
+package ru.androidschool.intensiv.presentation.movie_details
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -8,9 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.navArgs
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.GroupieViewHolder
-import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.schedulers.Schedulers
 import kotlinx.serialization.ExperimentalSerializationApi
 import ru.androidschool.intensiv.R
 import ru.androidschool.intensiv.common.loadImage
@@ -23,11 +21,10 @@ import ru.androidschool.intensiv.data.mapper.DbActorsMapper
 import ru.androidschool.intensiv.data.mapper.DbMovieDetailsMapper
 import ru.androidschool.intensiv.data.mapper.MovieDetailsMapper
 import ru.androidschool.intensiv.data.network.api.MovieApiClient
-import ru.androidschool.intensiv.data.repository.SelectedMovieRepository
+import ru.androidschool.intensiv.data.repositoryImpl.SelectedMovieRepository
 import ru.androidschool.intensiv.databinding.FragmentMovieDetailsBinding
 import ru.androidschool.intensiv.domain.entity.MovieDetailsEntity
 import timber.log.Timber
-import java.util.concurrent.TimeUnit
 
 @ExperimentalSerializationApi
 class MovieDetailsFragment : Fragment(R.layout.fragment_movie_details) {

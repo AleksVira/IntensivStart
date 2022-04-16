@@ -1,4 +1,4 @@
-package ru.androidschool.intensiv
+package ru.androidschool.intensiv.presentation.base
 
 import android.annotation.SuppressLint
 import android.os.Bundle
@@ -7,6 +7,7 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import ru.androidschool.intensiv.R
 import ru.androidschool.intensiv.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {

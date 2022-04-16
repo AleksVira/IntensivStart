@@ -12,32 +12,32 @@ import ru.androidschool.intensiv.data.network.dto.*
 interface MovieApiInterface {
 
     @GET("movie/now_playing")
-    fun getNowPlayingMoviesResponse(@Query("language") language: String = "ru"): Single<MoviesListResponse<MovieDto>>
+    fun getNowPlayingMoviesResponse(@Query("language") language: String = "en"): Single<MoviesListResponse<MovieDto>>
 
     @GET("movie/upcoming")
-    fun getUpcomingMoviesResponse(@Query("language") language: String = "ru"): Single<MoviesListResponse<MovieDto>>
+    fun getUpcomingMoviesResponse(@Query("language") language: String = "en"): Single<MoviesListResponse<MovieDto>>
 
     @GET("movie/popular")
-    fun getPopularMoviesResponse(@Query("language") language: String = "ru"): Single<MoviesListResponse<MovieDto>>
+    fun getPopularMoviesResponse(@Query("language") language: String = "en"): Single<MoviesListResponse<MovieDto>>
 
     @GET("tv/popular")
-    fun getTvShowsResponse(@Query("language") language: String = "ru"): Single<MoviesListResponse<TvShowDto>>
+    fun getTvShowsResponse(@Query("language") language: String = "en"): Single<MoviesListResponse<TvShowDto>>
 
     @GET("search/movie")
     fun searchMovieByTitle(
         @Query("query") query: String,
-        @Query("language") language: String = "ru"
+        @Query("language") language: String = "en"
     ): Observable<MoviesListResponse<MovieDto>>
 
     @GET("movie/{movie_id}")
     fun getMovieInfoById(
         @Path("movie_id") movieId: Int,
-        @Query("language") language: String = "ru"
+        @Query("language") language: String = "en"
     ): Single<MovieDetailInfoResponse>
 
     @GET("movie/{movie_id}/credits")
     fun getMoviePersonsById(
         @Path("movie_id") movieId: Int,
-        @Query("language") language: String = "ru"
+        @Query("language") language: String = "en"
     ): Single<MovieCreditsResponse>
 }

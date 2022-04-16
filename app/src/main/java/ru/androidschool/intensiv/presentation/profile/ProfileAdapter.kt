@@ -1,8 +1,8 @@
-package ru.androidschool.intensiv.ui.profile
+package ru.androidschool.intensiv.presentation.profile
 
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
-import ru.androidschool.intensiv.ui.watchlist.WatchlistFragment
+import ru.androidschool.intensiv.presentation.watchlist.WatchlistFragment
 
 class ProfileAdapter(
     fragment: Fragment,

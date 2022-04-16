@@ -1,4 +1,4 @@
-package ru.androidschool.intensiv.ui.search
+package ru.androidschool.intensiv.presentation.search
 
 import android.view.View
 import com.xwray.groupie.viewbinding.BindableItem

@@ -1,6 +1,7 @@
 package ru.androidschool.intensiv
 
 import android.app.Application
+import ru.androidschool.intensiv.presentation.base.MainActivity
 import timber.log.Timber
 
 class MovieFinderApp : Application() {

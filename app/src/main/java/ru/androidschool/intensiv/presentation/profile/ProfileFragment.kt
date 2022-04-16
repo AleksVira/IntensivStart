@@ -1,4 +1,4 @@
-package ru.androidschool.intensiv.ui.profile
+package ru.androidschool.intensiv.presentation.profile
 
 import android.os.Bundle
 import android.text.SpannableString

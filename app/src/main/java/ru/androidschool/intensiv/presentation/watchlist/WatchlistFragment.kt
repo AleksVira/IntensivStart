@@ -1,4 +1,4 @@
-package ru.androidschool.intensiv.ui.watchlist
+package ru.androidschool.intensiv.presentation.watchlist
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -11,7 +11,7 @@ import com.xwray.groupie.GroupieViewHolder
 import io.reactivex.disposables.CompositeDisposable
 import ru.androidschool.intensiv.common.prepare
 import ru.androidschool.intensiv.data.mapper.MovieDetailsMapper
-import ru.androidschool.intensiv.data.repository.SelectedMovieRepository
+import ru.androidschool.intensiv.data.repositoryImpl.SelectedMovieRepository
 import ru.androidschool.intensiv.databinding.FragmentWatchlistBinding
 
 class WatchlistFragment : Fragment() {

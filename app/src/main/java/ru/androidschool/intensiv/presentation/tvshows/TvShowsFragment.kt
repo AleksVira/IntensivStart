@@ -1,4 +1,4 @@
-package ru.androidschool.intensiv.ui.tvshows
+package ru.androidschool.intensiv.presentation.tvshows
 
 import android.os.Bundle
 import android.view.LayoutInflater

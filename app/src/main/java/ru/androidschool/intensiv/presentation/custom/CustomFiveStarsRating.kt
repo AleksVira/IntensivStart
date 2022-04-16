@@ -1,4 +1,4 @@
-package ru.androidschool.intensiv.ui.custom
+package ru.androidschool.intensiv.presentation.custom
 
 import android.content.Context
 import android.util.AttributeSet

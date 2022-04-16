@@ -1,4 +1,4 @@
-package ru.androidschool.intensiv.ui.movie_details
+package ru.androidschool.intensiv.presentation.movie_details
 
 import android.view.View
 import com.squareup.picasso.Picasso

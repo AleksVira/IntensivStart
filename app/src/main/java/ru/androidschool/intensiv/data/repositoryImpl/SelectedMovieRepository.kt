@@ -1,4 +1,4 @@
-package ru.androidschool.intensiv.data.repository
+package ru.androidschool.intensiv.data.repositoryImpl
 
 import android.content.Context
 import io.reactivex.Completable

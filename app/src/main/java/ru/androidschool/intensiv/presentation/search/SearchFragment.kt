@@ -1,4 +1,4 @@
-package ru.androidschool.intensiv.ui.search
+package ru.androidschool.intensiv.presentation.search
 
 import android.os.Bundle
 import android.view.LayoutInflater

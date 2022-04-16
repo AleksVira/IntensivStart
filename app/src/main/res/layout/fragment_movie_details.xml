@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/blueDark"
-    tools:context="ru.androidschool.intensiv.ui.movie_details.MovieDetailsFragment">
+    tools:context="ru.androidschool.intensiv.presentation.movie_details.MovieDetailsFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/detail_constraint_layout"
@@ -77,7 +77,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/detail_name_text" />
 
-        <ru.androidschool.intensiv.ui.custom.CustomFiveStarsRating
+        <ru.androidschool.intensiv.presentation.custom.CustomFiveStarsRating
             android:id="@+id/custom_rating"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -110,7 +110,7 @@
             tools:text="@tools:sample/lorem/random" />
 
 
-        <ru.androidschool.intensiv.ui.custom.MovieProgressFormView
+        <ru.androidschool.intensiv.presentation.custom.MovieProgressFormView
             android:id="@+id/progress_view"
             android:layout_width="match_parent"
             android:layout_height="0dp"

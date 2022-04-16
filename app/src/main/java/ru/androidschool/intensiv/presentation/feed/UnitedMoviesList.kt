@@ -1,4 +1,4 @@
-package ru.androidschool.intensiv.ui.feed
+package ru.androidschool.intensiv.presentation.feed
 
 import ru.androidschool.intensiv.data.network.dto.MovieDto
 import ru.androidschool.intensiv.data.network.dto.MoviesListResponse
