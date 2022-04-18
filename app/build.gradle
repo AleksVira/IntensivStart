@@ -113,4 +113,7 @@ dependencies {
     implementation "androidx.room:room-rxjava2:$roomVersion"
     implementation "android.arch.persistence.room:rxjava2:$archPersistenceRoomVersion"
 
+    // ViewBindingPropertyDelegate
+    implementation "com.github.kirich1409:viewbindingpropertydelegate-noreflection:$viewbindingpropertydelegateVersion"
+
 }

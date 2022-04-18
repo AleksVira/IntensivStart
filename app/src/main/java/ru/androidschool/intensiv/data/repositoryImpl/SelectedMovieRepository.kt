@@ -8,14 +8,16 @@ import ru.androidschool.intensiv.data.database.api.*
 import ru.androidschool.intensiv.data.database.entity.ActorDbEntity
 import ru.androidschool.intensiv.data.database.entity.MovieActorJoin
 import ru.androidschool.intensiv.data.database.entity.MovieDbEntity
+import ru.androidschool.intensiv.domain.repository.DbMovieRepository
 
-class SelectedMovieRepository(
+class LocalMovieRepository (
     private val context: Context,
-    private val movieDao: MovieDao = SelectedMovieDatabase(context).movieDao(),
-    private val actorDao: ActorDao = SelectedMovieDatabase(context).actorDao(),
-    private val movieWithActorsDao: MovieWithActorsDao = SelectedMovieDatabase(context).movieWithActorDao()
-) {
-    fun saveToDb(
+    private val movieDao: MovieDao = LocalMovieDatabase(context).movieDao(),
+    private val actorDao: ActorDao = LocalMovieDatabase(context).actorDao(),
+    private val movieWithActorsDao: MovieWithActorsDao = LocalMovieDatabase(context).movieWithActorDao()
+) : DbMovieRepository {
+
+    override fun saveToDb(
         currentDetailsForDb: MovieDbEntity,
         currentActors: List<ActorDbEntity>
     ): Completable {
@@ -32,15 +34,15 @@ class SelectedMovieRepository(
         return resultOne.andThen(resultTwo).andThen(resultThree)
     }
 
-    fun getSelectedMovies(): Observable<List<MovieWithActors>> {
+    override fun getSelectedMovies(): Observable<List<MovieWithActors>> {
         return movieWithActorsDao.getAllSelectedMovies()
     }
 
-    fun checkSavedMovieById(movieId: Int): Single<Boolean> {
+    override fun checkSavedMovieById(movieId: Int): Single<Boolean> {
         return movieDao.isExist(movieId)
     }
 
-    fun deleteMovieById(movieId: Int): Completable {
+    override fun deleteMovieById(movieId: Int): Completable {
         return movieDao.deleteById(movieId)
     }
 

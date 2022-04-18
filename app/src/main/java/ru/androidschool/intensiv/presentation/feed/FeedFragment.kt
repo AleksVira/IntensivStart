@@ -14,7 +14,6 @@ import io.reactivex.Observable
 import kotlinx.serialization.ExperimentalSerializationApi
 import ru.androidschool.intensiv.R
 import ru.androidschool.intensiv.data.repositoryImpl.RemoteMovieRepository
-import ru.androidschool.intensiv.data.repositoryImpl.SelectedMovieRepository
 import ru.androidschool.intensiv.databinding.FeedFragmentBinding
 import ru.androidschool.intensiv.databinding.FeedHeaderBinding
 import ru.androidschool.intensiv.domain.entity.MovieEntity

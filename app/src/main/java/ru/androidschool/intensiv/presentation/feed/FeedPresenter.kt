@@ -37,7 +37,6 @@ class FeedPresenter(
             }
     }
 
-
     fun fetchAllMovies() {
         feedInteractor.getFeedMovie()
             .prepare()
@@ -64,8 +63,6 @@ class FeedPresenter(
                 view?.showMovies(nowPlayingItems + upcomingItems + popularItems)
             }
             .let { compositeDisposable.add(it) }
-
-
     }
 
     private fun convertToItems(@StringRes header: Int, nowPlayingList: List<MovieEntity>) =
