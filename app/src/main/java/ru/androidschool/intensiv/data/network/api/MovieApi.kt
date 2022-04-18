@@ -9,7 +9,7 @@ import retrofit2.http.Path
 import retrofit2.http.Query
 import ru.androidschool.intensiv.data.network.dto.*
 
-interface MovieApiInterface {
+interface MovieApi {
 
     @GET("movie/now_playing")
     fun getNowPlayingMoviesResponse(@Query("language") language: String = "en"): Single<MoviesListResponse<MovieDto>>
@@ -36,7 +36,7 @@ interface MovieApiInterface {
     ): Single<MovieDetailInfoResponse>
 
     @GET("movie/{movie_id}/credits")
-    fun getMoviePersonsById(
+    fun getPersonsByMovieId(
         @Path("movie_id") movieId: Int,
         @Query("language") language: String = "en"
     ): Single<MovieCreditsResponse>

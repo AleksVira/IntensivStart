@@ -29,7 +29,7 @@
 
     <fragment
         android:id="@+id/movie_details_fragment"
-        android:name="ru.androidschool.intensiv.presentation.movie_details.MovieDetailsFragment"
+        android:name="ru.androidschool.intensiv.presentation.movie_details.fragment.MovieDetailsFragment"
         android:label="fragment_details"
         tools:layout="@layout/fragment_movie_details" >
         <argument

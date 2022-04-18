@@ -14,22 +14,22 @@ import ru.androidschool.intensiv.data.database.entity.MovieDbEntity
     version = 2,
     entities = [MovieDbEntity::class, ActorDbEntity::class, MovieActorJoin::class]
 )
-abstract class SelectedMovieDatabase : RoomDatabase() {
+abstract class LocalMovieDatabase : RoomDatabase() {
 
     abstract fun actorDao(): ActorDao
     abstract fun movieDao(): MovieDao
     abstract fun movieWithActorDao(): MovieWithActorsDao
 
     companion object {
-        private lateinit var INSTANCE: SelectedMovieDatabase
+        private lateinit var INSTANCE: LocalMovieDatabase
 
         @Synchronized
-        operator fun invoke(context: Context): SelectedMovieDatabase {
+        operator fun invoke(context: Context): LocalMovieDatabase {
             if (!::INSTANCE.isInitialized) {
                 INSTANCE = Room.databaseBuilder(
                     context.applicationContext,
-                    SelectedMovieDatabase::class.java,
-                    "SelectedMovieDatabase"
+                    LocalMovieDatabase::class.java,
+                    "LocalMovieDatabase"
                 )
                     .addMigrations(MIGRATION_1_2)
                     .build()

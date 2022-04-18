@@ -11,7 +11,7 @@ import com.xwray.groupie.GroupieViewHolder
 import io.reactivex.disposables.CompositeDisposable
 import ru.androidschool.intensiv.common.prepare
 import ru.androidschool.intensiv.data.mapper.MovieDetailsMapper
-import ru.androidschool.intensiv.data.repositoryImpl.SelectedMovieRepository
+import ru.androidschool.intensiv.data.repositoryImpl.LocalMovieRepository
 import ru.androidschool.intensiv.databinding.FragmentWatchlistBinding
 
 class WatchlistFragment : Fragment() {
@@ -25,7 +25,7 @@ class WatchlistFragment : Fragment() {
         GroupAdapter<GroupieViewHolder>()
     }
 
-    private lateinit var repository: SelectedMovieRepository
+    private lateinit var repository: LocalMovieRepository
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -38,7 +38,7 @@ class WatchlistFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        repository = SelectedMovieRepository(requireContext())
+        repository = LocalMovieRepository(requireContext())
 
         binding.moviesRecyclerView.layoutManager = GridLayoutManager(context, 3)
         binding.moviesRecyclerView.adapter = adapter.apply { addAll(listOf()) }

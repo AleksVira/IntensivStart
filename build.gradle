@@ -62,4 +62,6 @@ ext {
     rxAndroidVersion = '2.1.1'
     roomVersion = '2.4.2'
     archPersistenceRoomVersion = '1.1.1'
+
+    viewbindingpropertydelegateVersion = '1.5.3'
 }

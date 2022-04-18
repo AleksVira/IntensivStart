@@ -32,14 +32,14 @@ object MovieApiClient {
         .build()
 
     @ExperimentalSerializationApi
-    val apiClient: MovieApiInterface by lazy {
+    val apiClient: MovieApi by lazy {
         val retrofit: Retrofit = Retrofit.Builder()
             .baseUrl(BuildConfig.BASE_URL)
             .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
             .addCallAdapterFactory(RxJava2CallAdapterFactory.create()).client(httpClient)
             .build()
 
-        return@lazy retrofit.create(MovieApiInterface::class.java)
+        return@lazy retrofit.create(MovieApi::class.java)
     }
 
 }
