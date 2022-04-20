@@ -15,6 +15,7 @@ import ru.androidschool.intensiv.data.mapper.TvShowDtoMapper
 import ru.androidschool.intensiv.data.network.api.MovieApiClient
 import ru.androidschool.intensiv.databinding.FragmentTvShowsBinding
 import timber.log.Timber
+import java.util.*
 
 @ExperimentalSerializationApi
 class TvShowsFragment : Fragment(R.layout.fragment_tv_shows) {
@@ -41,12 +42,13 @@ class TvShowsFragment : Fragment(R.layout.fragment_tv_shows) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.tvShowList.adapter = adapter.apply { addAll(listOf()) }
-        fetchTvShowsList()
+        val lang = Locale.getDefault().language
+        fetchTvShowsList(lang)
     }
 
     @ExperimentalSerializationApi
-    private fun fetchTvShowsList() {
-        MovieApiClient.apiClient.getTvShowsResponse()
+    private fun fetchTvShowsList(lang: String) {
+        MovieApiClient.apiClient.getTvShowsResponse(lang)
             .prepare()
             .doOnSubscribe {
                 binding.progressView.visibility = View.VISIBLE

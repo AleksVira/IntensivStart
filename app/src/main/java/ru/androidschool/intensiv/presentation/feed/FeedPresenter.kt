@@ -5,8 +5,10 @@ import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import ru.androidschool.intensiv.R
+import ru.androidschool.intensiv.common.MoviesType
 import ru.androidschool.intensiv.common.prepare
 import ru.androidschool.intensiv.data.mapper.MovieDtoMapper
+import ru.androidschool.intensiv.data.network.dto.MovieDto
 import ru.androidschool.intensiv.domain.entity.MovieEntity
 import ru.androidschool.intensiv.domain.entity.MovieListToShow
 import ru.androidschool.intensiv.domain.interactor.FeedInteractor
@@ -38,8 +40,8 @@ class FeedPresenter(
     }
 
 
-    fun fetchAllMovies() {
-        feedInteractor.getFeedMovie()
+    fun fetchAllMovies(lang: String) {
+        feedInteractor.getFeedMovie(lang)
             .prepare()
             .doOnSubscribe {
                 view?.showProgress(true)
@@ -48,38 +50,49 @@ class FeedPresenter(
                 view?.showProgress(false)
             }
             .subscribe { response ->
-                val nowPlayingMovies = response.nowPlayingList.results ?: listOf()
-                val upcomingMovies = response.upcomingList.results ?: listOf()
-                val popularMovies = response.popularList.results ?: listOf()
+                var nowPlayingItems = emptyList<MainCardContainer>()
+                var upcomingItems = emptyList<MainCardContainer>()
+                var popularItems = emptyList<MainCardContainer>()
 
-                val nowPlayingItems = convertToItems(R.string.recommended, nowPlayingMovies.map {
-                    movieDtoMapper.mapTo(it)
-                })
-                val upcomingItems = convertToItems(R.string.upcoming, upcomingMovies.map {
-                    movieDtoMapper.mapTo(it)
-                })
-                val popularItems = convertToItems(R.string.popular, popularMovies.map {
-                    movieDtoMapper.mapTo(it)
-                })
+                response.map { entry ->
+                    when (entry.key) {
+                        MoviesType.NOW_PLAYING -> {
+                            nowPlayingItems = movieListConverter(
+                                R.string.recommended, entry.value.results ?: listOf()
+                            )
+                        }
+                        MoviesType.UPCOMING -> {
+                            upcomingItems = movieListConverter(
+                                R.string.upcoming, entry.value.results ?: listOf()
+                            )
+                        }
+                        MoviesType.POPULAR -> {
+                            popularItems = movieListConverter(
+                                R.string.popular, entry.value.results ?: listOf()
+                            )
+                        }
+                    }
+                }
                 view?.showMovies(nowPlayingItems + upcomingItems + popularItems)
             }
             .let { compositeDisposable.add(it) }
-
-
     }
 
-    private fun convertToItems(@StringRes header: Int, nowPlayingList: List<MovieEntity>) =
+    private fun movieListConverter(@StringRes header: Int, value: List<MovieDto>) =
         listOf(
             MainCardContainer(
                 header,
-                nowPlayingList.map {
+                value.map { movieDto ->
+                    movieDtoMapper.mapTo(movieDto)
+                }.map {
                     MovieItem(it) { movie -> view?.openMovieDetails(movie) }
                 }
             )
         )
 
-    fun startSearch(searchString: String) {
-        feedInteractor.searchMovie(searchString)
+
+    fun startSearch(searchString: String, lang: String) {
+        feedInteractor.searchMovieByTitle(searchString, lang)
             .prepare()
             .doOnSubscribe {
                 view?.showProgress(true)

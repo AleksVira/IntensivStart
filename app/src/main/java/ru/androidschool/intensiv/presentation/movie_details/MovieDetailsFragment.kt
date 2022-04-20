@@ -25,6 +25,7 @@ import ru.androidschool.intensiv.data.repositoryImpl.SelectedMovieRepository
 import ru.androidschool.intensiv.databinding.FragmentMovieDetailsBinding
 import ru.androidschool.intensiv.domain.entity.MovieDetailsEntity
 import timber.log.Timber
+import java.util.*
 
 @ExperimentalSerializationApi
 class MovieDetailsFragment : Fragment(R.layout.fragment_movie_details) {
@@ -64,8 +65,9 @@ class MovieDetailsFragment : Fragment(R.layout.fragment_movie_details) {
         repository = SelectedMovieRepository(requireContext())
         binding.arrowBackImage.setOnClickListener { onBackPressed() }
         args.movieId.let { movieId ->
-            fetchDetailMovieInfo(movieId)
-            fetchActors(movieId)
+            val lang = Locale.getDefault().language
+            fetchDetailMovieInfo(movieId, lang)
+            fetchActors(movieId, lang)
             checkSelectedMovies(movieId)
         }
         binding.likeImage.setThrottleClickListener {
@@ -124,8 +126,8 @@ class MovieDetailsFragment : Fragment(R.layout.fragment_movie_details) {
         }
     }
 
-    private fun fetchDetailMovieInfo(movieId: Int) {
-        MovieApiClient.apiClient.getMovieInfoById(movieId)
+    private fun fetchDetailMovieInfo(movieId: Int, lang: String) {
+        MovieApiClient.apiClient.getMovieInfoById(movieId, lang)
             .prepare()
             .doOnError {
                 Timber.d("MyTAG_MovieDetailsFragment_fetchDetailMovieInfo(): $it")
@@ -153,8 +155,8 @@ class MovieDetailsFragment : Fragment(R.layout.fragment_movie_details) {
             }
     }
 
-    private fun fetchActors(movieId: Int) {
-        MovieApiClient.apiClient.getMoviePersonsById(movieId)
+    private fun fetchActors(movieId: Int, lang: String) {
+        MovieApiClient.apiClient.getMoviePersonsById(movieId, lang)
             .prepare()
             .doOnSubscribe {
                 binding.progressView.visibility = View.VISIBLE

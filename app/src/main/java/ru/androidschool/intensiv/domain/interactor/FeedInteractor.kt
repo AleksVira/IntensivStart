@@ -2,21 +2,25 @@ package ru.androidschool.intensiv.domain.interactor
 
 import io.reactivex.Observable
 import io.reactivex.Single
-import ru.androidschool.intensiv.common.prepare
-import ru.androidschool.intensiv.data.network.api.MovieApiClient
+import ru.androidschool.intensiv.common.MoviesType
+import ru.androidschool.intensiv.common.MoviesType.*
 import ru.androidschool.intensiv.data.network.dto.MovieDto
 import ru.androidschool.intensiv.data.network.dto.MoviesListResponse
-import ru.androidschool.intensiv.data.repositoryImpl.RemoteMovieRepository
-import ru.androidschool.intensiv.data.repositoryImpl.SelectedMovieRepository
-import ru.androidschool.intensiv.presentation.feed.UnitedMoviesList
+import ru.androidschool.intensiv.data.repositoryImpl.NowPlayingMovieRepository
+import ru.androidschool.intensiv.data.repositoryImpl.PopularMovieRepository
+import ru.androidschool.intensiv.data.repositoryImpl.SearchMovieRepository
+import ru.androidschool.intensiv.data.repositoryImpl.UpcomingMovieRepository
 
 class FeedInteractor(
-    private val remoteMovieRepo: RemoteMovieRepository
+    private val nowPlayingMovieRepository: NowPlayingMovieRepository,
+    private val popularMovieRepository: PopularMovieRepository,
+    private val upcomingMovieRepository: UpcomingMovieRepository,
+    private val searchMovieRepo: SearchMovieRepository,
 ) {
-    fun getFeedMovie(): Single<UnitedMoviesList> {
-        val getNowPlayingMovies = remoteMovieRepo.getNowPlayingMovies()
-        val getUpcomingMovies = remoteMovieRepo.getUpcomingMovies()
-        val getPopularMovies = remoteMovieRepo.getPopularMovies()
+    fun getFeedMovie(lang: String): Single<Map<MoviesType, MoviesListResponse<MovieDto>>> {
+        val getNowPlayingMovies = nowPlayingMovieRepository.getMovies(lang)
+        val getUpcomingMovies = upcomingMovieRepository.getMovies(lang)
+        val getPopularMovies = popularMovieRepository.getMovies(lang)
 
         return Single.zip(
             getNowPlayingMovies,
@@ -25,13 +29,19 @@ class FeedInteractor(
         ) { nowPlayingList: MoviesListResponse<MovieDto>,
             upcomingList: MoviesListResponse<MovieDto>,
             popularList: MoviesListResponse<MovieDto> ->
-            UnitedMoviesList(nowPlayingList, upcomingList, popularList)
+            mapOf(
+                NOW_PLAYING to nowPlayingList,
+                UPCOMING to upcomingList,
+                POPULAR to popularList
+            )
         }
-
     }
 
-    fun searchMovie(searchString: String): Observable<MoviesListResponse<MovieDto>> {
-        return remoteMovieRepo.searchMovieByTitle(searchString)
+    fun searchMovieByTitle(
+        searchString: String,
+        lang: String
+    ): Observable<MoviesListResponse<MovieDto>> {
+        return searchMovieRepo.searchMovies(searchString, lang)
     }
 
 }

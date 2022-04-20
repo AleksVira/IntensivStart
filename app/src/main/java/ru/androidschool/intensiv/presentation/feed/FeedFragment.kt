@@ -13,14 +13,16 @@ import com.xwray.groupie.GroupieViewHolder
 import io.reactivex.Observable
 import kotlinx.serialization.ExperimentalSerializationApi
 import ru.androidschool.intensiv.R
-import ru.androidschool.intensiv.data.repositoryImpl.RemoteMovieRepository
-import ru.androidschool.intensiv.data.repositoryImpl.SelectedMovieRepository
+import ru.androidschool.intensiv.data.repositoryImpl.NowPlayingMovieRepository
+import ru.androidschool.intensiv.data.repositoryImpl.PopularMovieRepository
+import ru.androidschool.intensiv.data.repositoryImpl.SearchMovieRepository
+import ru.androidschool.intensiv.data.repositoryImpl.UpcomingMovieRepository
 import ru.androidschool.intensiv.databinding.FeedFragmentBinding
 import ru.androidschool.intensiv.databinding.FeedHeaderBinding
 import ru.androidschool.intensiv.domain.entity.MovieEntity
 import ru.androidschool.intensiv.domain.entity.MovieListToShow
 import ru.androidschool.intensiv.domain.interactor.FeedInteractor
-import timber.log.Timber
+import java.util.*
 
 @ExperimentalSerializationApi
 class FeedFragment : Fragment(R.layout.feed_fragment), FeedPresenter.FeedView {
@@ -29,7 +31,12 @@ class FeedFragment : Fragment(R.layout.feed_fragment), FeedPresenter.FeedView {
     private var _searchBinding: FeedHeaderBinding? = null
 
     private val presenter: FeedPresenter by lazy {
-        FeedPresenter(FeedInteractor(RemoteMovieRepository()))
+        FeedPresenter(FeedInteractor(
+            NowPlayingMovieRepository(),
+            PopularMovieRepository(),
+            UpcomingMovieRepository(),
+            SearchMovieRepository(),
+        ))
     }
 
     private val binding get() = requireNotNull(_binding)
@@ -67,7 +74,7 @@ class FeedFragment : Fragment(R.layout.feed_fragment), FeedPresenter.FeedView {
         presenter.attachView(this)
         formSearchEditText = searchBinding.searchToolbar.binding.searchEditText
         binding.moviesRecyclerView.adapter = adapter.apply { addAll(listOf()) }
-        presenter.fetchAllMovies()
+        presenter.fetchAllMovies(Locale.getDefault().language)
     }
 
 
@@ -95,36 +102,7 @@ class FeedFragment : Fragment(R.layout.feed_fragment), FeedPresenter.FeedView {
     }
 
     override fun startSearch(initialString: String) {
-        presenter.startSearch(initialString)
-/*
-        MovieApiClient.apiClient.searchMovieByTitle(initialString)
-            .prepare()
-            .doOnSubscribe {
-                binding.progressView.visibility = VISIBLE
-            }
-            .doFinally {
-                binding.progressView.visibility = GONE
-            }
-            .doOnError {
-                Timber.d("MyTAG_FeedFragment_startSearch(): $it")
-            }
-            .doOnNext { response ->
-                if (initialString == formSearchEditText.text.toString()) {
-                    Timber.d("MyTAG_FeedFragment_startSearch(): CAN SHOW!")
-                    val moviesDtoList = response.results ?: listOf()
-                    val moviesEntityList = moviesDtoList.map { movieDto ->
-                        movieDtoMapper.mapTo(movieDto)
-                    }
-                    showSearchResult(MovieListToShow(moviesEntityList), initialString)
-                } else {
-                    Timber.d("MyTAG_FeedFragment_startSearch(): SHOULD SEARCH AGAIN")
-                }
-            }
-            .subscribe()
-            .let {
-                compositeDisposable.add(it)
-            }
-*/
+        presenter.startSearch(initialString, Locale.getDefault().language)
     }
 
     override fun showSearchResult(movieListToShow: MovieListToShow, searchString: String) {
@@ -133,7 +111,7 @@ class FeedFragment : Fragment(R.layout.feed_fragment), FeedPresenter.FeedView {
                 .actionHomeDestToSearchDest(movieListToShow, searchString)
             findNavController().navigate(searchAction)
         } else {
-            presenter.startSearch(formSearchEditText.text.toString())
+            presenter.startSearch(formSearchEditText.text.toString(), Locale.getDefault().language)
         }
     }
 
